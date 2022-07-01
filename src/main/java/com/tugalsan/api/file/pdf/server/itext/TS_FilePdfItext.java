@@ -10,7 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.IntStream;
 import com.tugalsan.api.charset.client.TGS_CharacterSets;
+import com.tugalsan.api.coronator.client.*;
 import com.tugalsan.api.log.server.TS_Log;
+import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FilePdfItext implements AutoCloseable {
 
@@ -66,7 +68,7 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public static Rectangle getPAGE_SIZE_A0_LAND() {
-        return  PageSize.A0.rotate();
+        return PageSize.A0.rotate();
     }
 
     public static Rectangle getPAGE_SIZE_A0_PORT() {
@@ -136,42 +138,26 @@ public class TS_FilePdfItext implements AutoCloseable {
         this.file = file;
     }
 
-    public void createNewPage(int pageSizeAX, boolean landscape, Integer marginLeft, Integer marginRight, Integer marginTop, Integer marginBottom) {
-        try {
+    public void createNewPage(int pageSizeAX0, boolean landscape, Integer marginLeft0, Integer marginRight0, Integer marginTop0, Integer marginBottom0) {
+        TGS_UnSafe.execute(() -> {
             d.ci("createNewPage");
-            if (marginLeft == null) {
-                marginLeft = 50;
-            }
-            if (marginRight == null) {
-                marginRight = 50;
-            }
-            if (marginTop == null) {
-                marginTop = 50;
-            }
-            if (marginBottom == null) {
-                marginBottom = 50;
-            }
-            var pageSize = TS_FilePdfItext.getPAGE_SIZE_A4_PORT();
-            pageSizeAX = pageSizeAX < 0 ? 0 : pageSizeAX;
-            pageSizeAX = pageSizeAX > 6 ? 6 : pageSizeAX;
-            switch (pageSizeAX) {
-                case 0 ->
-                    pageSize = landscape ? TS_FilePdfItext.getPAGE_SIZE_A0_LAND() : TS_FilePdfItext.getPAGE_SIZE_A0_PORT();
-                case 1 ->
-                    pageSize = landscape ? TS_FilePdfItext.getPAGE_SIZE_A1_LAND() : TS_FilePdfItext.getPAGE_SIZE_A1_PORT();
-                case 2 ->
-                    pageSize = landscape ? TS_FilePdfItext.getPAGE_SIZE_A2_LAND() : TS_FilePdfItext.getPAGE_SIZE_A2_PORT();
-                case 3 ->
-                    pageSize = landscape ? TS_FilePdfItext.getPAGE_SIZE_A3_LAND() : TS_FilePdfItext.getPAGE_SIZE_A3_PORT();
-                case 4 ->
-                    pageSize = landscape ? TS_FilePdfItext.getPAGE_SIZE_A4_LAND() : TS_FilePdfItext.getPAGE_SIZE_A4_PORT();
-                case 5 ->
-                    pageSize = landscape ? TS_FilePdfItext.getPAGE_SIZE_A5_LAND() : TS_FilePdfItext.getPAGE_SIZE_A5_PORT();
-                case 6 ->
-                    pageSize = landscape ? TS_FilePdfItext.getPAGE_SIZE_A6_LAND() : TS_FilePdfItext.getPAGE_SIZE_A6_PORT();
-                default -> {
-                }
-            }
+            var marginLeft = marginLeft0 == null ? 50 : marginLeft0;
+            var marginRight = marginRight0 == null ? 10 : marginRight0;
+            var marginTop = marginTop0 == null ? 10 : marginTop0;
+            var marginBottom = marginBottom0 == null ? 10 : marginBottom0;
+            var pageSizeAX = TGS_Coronator.of(pageSizeAX0)
+                    .anointIf(val -> val < 0, val -> 0)
+                    .anointIf(val -> val > 6, val -> 6)
+                    .coronate();
+            var pageSize = TGS_Coronator.of(TS_FilePdfItext.getPAGE_SIZE_A4_PORT())
+                    .anointIf(val -> pageSizeAX == 0, val -> landscape ? TS_FilePdfItext.getPAGE_SIZE_A0_LAND() : TS_FilePdfItext.getPAGE_SIZE_A0_PORT())
+                    .anointIf(val -> pageSizeAX == 1, val -> landscape ? TS_FilePdfItext.getPAGE_SIZE_A1_LAND() : TS_FilePdfItext.getPAGE_SIZE_A1_PORT())
+                    .anointIf(val -> pageSizeAX == 2, val -> landscape ? TS_FilePdfItext.getPAGE_SIZE_A2_LAND() : TS_FilePdfItext.getPAGE_SIZE_A2_PORT())
+                    .anointIf(val -> pageSizeAX == 3, val -> landscape ? TS_FilePdfItext.getPAGE_SIZE_A3_LAND() : TS_FilePdfItext.getPAGE_SIZE_A3_PORT())
+                    .anointIf(val -> pageSizeAX == 4, val -> landscape ? TS_FilePdfItext.getPAGE_SIZE_A4_LAND() : TS_FilePdfItext.getPAGE_SIZE_A4_PORT())
+                    .anointIf(val -> pageSizeAX == 5, val -> landscape ? TS_FilePdfItext.getPAGE_SIZE_A5_LAND() : TS_FilePdfItext.getPAGE_SIZE_A5_PORT())
+                    .anointIf(val -> pageSizeAX == 6, val -> landscape ? TS_FilePdfItext.getPAGE_SIZE_A6_LAND() : TS_FilePdfItext.getPAGE_SIZE_A6_PORT())
+                    .coronate();
             if (document == null) {
                 document = new TS_FilePdfItextDocumentAutoClosable(pageSize, marginLeft, marginRight, marginTop, marginBottom);
                 writer = TS_FilePdfItextPDFWriter.getInstance(document, Files.newOutputStream(file));//I KNOW
@@ -180,9 +166,7 @@ public class TS_FilePdfItext implements AutoCloseable {
                 document.setPageSize(pageSize);
                 document.newPage();
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 
     public void setAlignLeft(Paragraph p) {
@@ -221,7 +205,7 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     private Chunk createChunkText(CharSequence text, Font font) {
-        Chunk c = new Chunk(text.toString());
+        var c = new Chunk(text.toString());
         c.setFont(font);
         return c;
     }
@@ -231,19 +215,11 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public Image createImage(java.awt.Image imageFile, Color color) {
-        try {
-            return Image.getInstance(imageFile, color);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return TGS_UnSafe.compile(() -> Image.getInstance(imageFile, color));
     }
 
     public Image createImage(CharSequence filePath) {
-        try {
-            return Image.getInstance(filePath.toString());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return TGS_UnSafe.compile(() -> Image.getInstance(filePath.toString()));
     }
 
     public void addImageToPageLeft(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
@@ -251,9 +227,9 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void addImageToPageLeft(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        try {
+        TGS_UnSafe.execute(() -> {
             if (image == null) {
-                throw new RuntimeException("TKPDFDocument.addImageToPageLeft.image == null");
+                TGS_UnSafe.catchMeIfUCan(d.className, "addImageToPageLeft", "image == null");
             }
             if (textWrap) {
                 image.setAlignment(Image.ALIGN_LEFT | Image.TEXTWRAP);
@@ -261,9 +237,7 @@ public class TS_FilePdfItext implements AutoCloseable {
                 image.setAlignment(Image.ALIGN_LEFT);
             }
             document.add(image);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 
     public void addImageToPageRight(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
@@ -271,9 +245,9 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void addImageToPageRight(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        try {
+        TGS_UnSafe.execute(() -> {
             if (image == null) {
-                throw new RuntimeException("TKPDFDocument.addImageToPageRight.image == null");
+                TGS_UnSafe.catchMeIfUCan(d.className, "addImageToPageRight", "image == null");
             }
             if (textWrap) {
                 image.setAlignment(Image.ALIGN_RIGHT | Image.TEXTWRAP);
@@ -281,9 +255,7 @@ public class TS_FilePdfItext implements AutoCloseable {
                 image.setAlignment(Image.ALIGN_RIGHT);
             }
             document.add(image);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 
     public void addImageToPageCenter(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
@@ -291,9 +263,9 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void addImageToPageCenter(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        try {
+        TGS_UnSafe.execute(() -> {
             if (image == null) {
-                throw new RuntimeException("TKPDFDocument.addImageToPageCenter.image == null");
+                TGS_UnSafe.catchMeIfUCan(d.className, "addImageToPageCenter", "image == null");
             }
             if (textWrap) {
                 image.setAlignment(Image.ALIGN_CENTER | Image.TEXTWRAP);
@@ -301,9 +273,7 @@ public class TS_FilePdfItext implements AutoCloseable {
                 image.setAlignment(Image.ALIGN_CENTER);
             }
             document.add(image);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 
     public void addImageToCellLeft(PdfPCell cell, java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
@@ -369,19 +339,11 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void addParagraphToPage(Paragraph p) {
-        try {
-            document.add(p);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        TGS_UnSafe.execute(() -> document.add(p));
     }
 
     public void addTableToPage(PdfPTable table) {
-        try {
-            document.add(table);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        TGS_UnSafe.execute(() -> document.add(table));
     }
 
     public void addCellToTable(PdfPTable table, PdfPCell cell, int rotation_0_90_180_270) {
@@ -449,32 +411,15 @@ public class TS_FilePdfItext implements AutoCloseable {
 
     @Override
     public void close() {
-        RuntimeException rteD = null;
-        RuntimeException rteW = null;
-        try {
-            {//CLOSURE FIX
-                var p = createParagraph();
-                addChunkToParagraph(createChunkText("."), p);
-                addParagraphToPage(p);
-            }
-            try {
-                document.close();
-            } catch (Exception e) {
-                rteD = new RuntimeException(e);
-            }
-            try {
-                writer.close();
-            } catch (Exception e) {
-                rteW = new RuntimeException(e);
-            }
-        } catch (Exception e) {
-            if (rteD != null) {
-                rteD.printStackTrace();
-            }
-            if (rteW != null) {
-                rteW.printStackTrace();
-            }
-        }
+        closeFix();
+        TGS_UnSafe.execute(() -> document.close(), exception -> exception.printStackTrace());
+        TGS_UnSafe.execute(() -> writer.close(), exception -> exception.printStackTrace());
+    }
+
+    private void closeFix() {
+        var p = createParagraph();
+        addChunkToParagraph(createChunkText("."), p);
+        addParagraphToPage(p);
     }
 
     public Document getDocument() {

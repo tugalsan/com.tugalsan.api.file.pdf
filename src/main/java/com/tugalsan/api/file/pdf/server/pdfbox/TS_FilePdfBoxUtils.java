@@ -17,6 +17,7 @@ import com.tugalsan.api.file.txt.server.*;
 import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.shape.client.*;
+import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FilePdfBoxUtils {
 
@@ -32,7 +33,7 @@ public class TS_FilePdfBoxUtils {
         if (optional_iframe_video != null) {
             strHtm = TS_FileHtmlUtils.appendResponsiveVideo(strHtm, optional_iframe_video);
         }
-        if (optionalHeaderContent != null){
+        if (optionalHeaderContent != null) {
             strHtm = TS_FileHtmlUtils.appendToBodyStartAfter(strHtm, optionalHeaderContent);
         }
         if (optionalTitle != null) {
@@ -43,40 +44,30 @@ public class TS_FilePdfBoxUtils {
     }
 
     private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
-        d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
-        try ( var pdf = Loader.loadPDF(srcPDF.toFile());  var output = new PrintWriter(dstHTM.toFile(), TGS_CharacterSets.UTF8());) {
-            new PDFDomTree().writeText(pdf, output);
-            d.cr("castFromPDFtoHTM", "success");
-        } catch (Exception e) {
-            d.ce("castFromPDFtoHTM", "failed", e.getMessage());
-            throw new RuntimeException(e);
-        }
-        return dstHTM;
+        return TGS_UnSafe.compile(() -> {
+            d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
+            try ( var pdf = Loader.loadPDF(srcPDF.toFile());  var output = new PrintWriter(dstHTM.toFile(), TGS_CharacterSets.UTF8());) {
+                new PDFDomTree().writeText(pdf, output);
+                d.cr("castFromPDFtoHTM", "success");
+            }
+            return dstHTM;
+        });
     }
 
     public static PDImageXObject getImage(Path imgFile, PDDocument document) {
-        try {
-            return PDImageXObject.createFromFile(imgFile.toAbsolutePath().toString(), document);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        return TGS_UnSafe.compile(() -> PDImageXObject.createFromFile(imgFile.toAbsolutePath().toString(), document));
     }
 
     public static PDImageXObject getImage(BufferedImage bi, PDDocument document) {
-        try {
-            return LosslessFactory.createFromImage(document, bi);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        return TGS_UnSafe.compile(() -> LosslessFactory.createFromImage(document, bi));
     }
 
     public static void insertImage(PDDocument document, PDPage page, PDImageXObject pdImage, int offsetX, int offsetY, float scale) {
-        try ( PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-            contentStream.drawImage(pdImage, offsetX, offsetY, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
-        } catch (Exception e) {
-            d.ce("insertImage", "failed", e.getMessage());
-            throw new RuntimeException(e);
-        }
+        TGS_UnSafe.execute(() -> {
+            try ( var contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+                contentStream.drawImage(pdImage, offsetX, offsetY, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
+            }
+        });
     }
 
     public static List<Path> castFromIMGtoPDF_A4PORT_AllFiles(Path directory, boolean skipIfExists, boolean deleteIMGAfterConversion) {
@@ -101,23 +92,25 @@ public class TS_FilePdfBoxUtils {
     }
 
     public static Path castFromIMGtoPDF_A4PORT(Path srcIMG, Path dstPDF) {
-        d.cr("castFromJPGtoPDF", "init", srcIMG, dstPDF);
-        TS_FileUtils.deleteFileIfExists(dstPDF);
-        var bi = TS_FileImageUtils.autoSizeRespectfully(TS_FileImageUtils.readImageFromFile(srcIMG, true),
-                new TGS_ShapeDimension(612, 792),
-                0.8f
-        );
-        try ( var document = new PDDocument();) {
-            var blankPage = new PDPage();
-            document.addPage(blankPage);
-            var pdImage = getImage(bi, document);
-            insertImage(document, blankPage, pdImage, 0, 0, 1f);
-            document.save(dstPDF.toFile());
-        } catch (Exception e) {
-            d.ce("castFromJPGtoPDF", "failed", e.getMessage());
-            throw new RuntimeException(e);
-        }
-        return dstPDF;
+        return TGS_UnSafe.compile(() -> {
+            d.cr("castFromJPGtoPDF", "init", srcIMG, dstPDF);
+            TS_FileUtils.deleteFileIfExists(dstPDF);
+            var bi = TS_FileImageUtils.autoSizeRespectfully(TS_FileImageUtils.readImageFromFile(srcIMG, true),
+                    new TGS_ShapeDimension(612, 792),
+                    0.8f
+            );
+            try ( var document = new PDDocument();) {
+                var blankPage = new PDPage();
+                document.addPage(blankPage);
+                var pdImage = getImage(bi, document);
+                insertImage(document, blankPage, pdImage, 0, 0, 1f);
+                document.save(dstPDF.toFile());
+            }
+            return dstPDF;
+        }, e -> {
+            d.ce("castFromIMGtoPDF_A4PORT", "failed", e.getMessage());
+            return TGS_UnSafe.catchMeIfUCanReturns(e);
+        });
     }
 
     public static boolean isSupportedIMG(Path imgFile) {
@@ -126,33 +119,37 @@ public class TS_FilePdfBoxUtils {
     }
 
     public static Path createPageBlank(Path path) {
-        try ( var document = new PDDocument();) {
-            var blankPage = new PDPage();
-            document.addPage(blankPage);
-            document.save(path.toFile());
-            return path;
-        } catch (Exception e) {
+        return TGS_UnSafe.compile(() -> {
+            try ( var document = new PDDocument();) {
+                var blankPage = new PDPage();
+                document.addPage(blankPage);
+                document.save(path.toFile());
+                return path;
+            }
+        }, e -> {
             d.ce("createPageBlank", "failed", e.getMessage());
-            throw new RuntimeException(e);
-        }
+            return TGS_UnSafe.catchMeIfUCanReturns(e);
+        });
     }
 
     public static Path createPageText(Path path, String text) {
-        try ( var document = new PDDocument();) {
-            var page = new PDPage();
-            document.addPage(page);
-            try ( var contentStream = new PDPageContentStream(document, page);) {
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-                contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("Hello World");
-                contentStream.endText();
+        return TGS_UnSafe.compile(() -> {
+            try ( var document = new PDDocument();) {
+                var page = new PDPage();
+                document.addPage(page);
+                try ( var contentStream = new PDPageContentStream(document, page);) {
+                    contentStream.beginText();
+                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                    contentStream.newLineAtOffset(100, 700);
+                    contentStream.showText("Hello World");
+                    contentStream.endText();
+                }
+                document.save(path.toFile());
+                return path;
             }
-            document.save(path.toFile());
-            return path;
-        } catch (Exception e) {
-            d.ce("createPageBlank", "failed", e.getMessage());
-            throw new RuntimeException(e);
-        }
+        }, e -> {
+            d.ce("createPageText", "failed", e.getMessage());
+            return TGS_UnSafe.catchMeIfUCanReturns(e);
+        });
     }
 }

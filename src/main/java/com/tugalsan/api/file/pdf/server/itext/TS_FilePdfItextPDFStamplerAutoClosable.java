@@ -2,6 +2,7 @@ package com.tugalsan.api.file.pdf.server.itext;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfStamper;
+import com.tugalsan.api.unsafe.client.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -21,11 +22,6 @@ public class TS_FilePdfItextPDFStamplerAutoClosable extends PdfStamper implement
 
     @Override
     public void close() {
-        try {
-            super.close();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        TGS_UnSafe.execute(() -> super.close());
     }
-
 }
