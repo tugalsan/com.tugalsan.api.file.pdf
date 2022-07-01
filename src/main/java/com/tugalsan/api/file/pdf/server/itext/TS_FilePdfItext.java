@@ -411,9 +411,9 @@ public class TS_FilePdfItext implements AutoCloseable {
 
     @Override
     public void close() {
-        closeFix();
-        TGS_UnSafe.execute(() -> document.close(), exception -> exception.printStackTrace());
-        TGS_UnSafe.execute(() -> writer.close(), exception -> exception.printStackTrace());
+        TGS_UnSafe.execute(() -> closeFix(), e -> e.printStackTrace());
+        TGS_UnSafe.execute(() -> document.close(), e -> e.printStackTrace());
+        TGS_UnSafe.execute(() -> writer.close(), e -> e.printStackTrace());
     }
 
     private void closeFix() {
