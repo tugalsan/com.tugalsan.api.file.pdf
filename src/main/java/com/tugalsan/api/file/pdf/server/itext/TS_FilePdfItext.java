@@ -5,12 +5,13 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.tugalsan.api.charset.client.*;
 import java.awt.Color;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.IntStream;
-import com.tugalsan.api.charset.client.TGS_CharacterSets;
 import com.tugalsan.api.coronator.client.*;
+import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.unsafe.client.*;
 
@@ -351,9 +352,74 @@ public class TS_FilePdfItext implements AutoCloseable {
         table.addCell(cell);
     }
 
-    public static Font getFont(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
-        //FIX UTF8FONT
-        return FontFactory.getFont(BaseFont.TIMES_ROMAN, TGS_CharacterSets.IBM_TURKISH(), true, fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
+    public static Font getFontFrom(int fontSize, boolean bold, boolean italic, BaseColor fontColor,
+            Path fontPathBold, Path fontPathBoldItalic, Path fontPathItalic, Path fontPathRegular, float fontSizeCorrectionForFontFile) {
+        int fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
+        if (bold && italic) {
+            if (!TS_FileUtils.isExistFile(fontPathBoldItalic)) {
+                d.ce("getFontFrom", "UTF8 font bold & italic not find!", fontPathBoldItalic);
+                return getFontInternal(fontSize, bold, italic, fontColor);
+            }
+            return new Font(
+                    TGS_UnSafe.compile(() -> {
+                        return BaseFont.createFont(
+                                fontPathBoldItalic.toAbsolutePath().normalize().toString(),
+                                BaseFont.IDENTITY_H, BaseFont.EMBEDDED
+                        );
+                    }),
+                    fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
+            );
+        }
+        if (!TS_FileUtils.isExistFile(fontPathBold)) {
+            if (bold) {
+                if (!TS_FileUtils.isExistFile(fontPathBold)) {
+                    d.ce("getFontFrom", "UTF8 font bold not find!", fontPathBold);
+                    return getFontInternal(fontSize, bold, italic, fontColor);
+                }
+                return new Font(
+                        TGS_UnSafe.compile(() -> {
+                            return BaseFont.createFont(
+                                    fontPathBold.toAbsolutePath().normalize().toString(),
+                                    BaseFont.IDENTITY_H, BaseFont.EMBEDDED
+                            );
+                        }),
+                        fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
+                );
+            }
+        }
+        if (italic) {
+            if (!TS_FileUtils.isExistFile(fontPathItalic)) {
+                d.ce("getFontFrom", "UTF8 font italic not find!", fontPathItalic);
+                return getFontInternal(fontSize, bold, italic, fontColor);
+            }
+            return new Font(
+                    TGS_UnSafe.compile(() -> {
+                        return BaseFont.createFont(
+                                fontPathItalic.toAbsolutePath().normalize().toString(),
+                                BaseFont.IDENTITY_H, BaseFont.EMBEDDED
+                        );
+                    }),
+                    fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
+            );
+        }
+        if (!TS_FileUtils.isExistFile(fontPathRegular)) {
+            d.ce("getFontFrom", "UTF8 font regular not find!", fontPathRegular);
+            return getFontInternal(fontSize, bold, italic, fontColor);
+        }
+        return new Font(
+                TGS_UnSafe.compile(() -> {
+                    return BaseFont.createFont(
+                            fontPathRegular.toAbsolutePath().normalize().toString(),
+                            BaseFont.IDENTITY_H, BaseFont.EMBEDDED
+                    );
+                }),
+                fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
+        );
+    }
+
+    public static Font getFontInternal(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
+        int fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
+        return FontFactory.getFont(BaseFont.TIMES_ROMAN, TGS_CharacterSets.IBM_TURKISH(), true, fontSize, fontStyle, fontColor);
         //return FontFactory.getFont("arialuni", "Cp857", true, fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
         //return FontFactory.getFont("arialuni", "Identity-H", fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
         //return FontFactory.getFont(FontFactory.HELVETICA, TK_GWTCharacterSets.DEFAULT, fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
@@ -417,10 +483,14 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     private void closeFix() {
+        if (skipCloseFix) {
+            return;
+        }
         var p = createParagraph();
         addChunkToParagraph(createChunkText("."), p);
         addParagraphToPage(p);
     }
+    public boolean skipCloseFix = true;
 
     public Document getDocument() {
         return document;
