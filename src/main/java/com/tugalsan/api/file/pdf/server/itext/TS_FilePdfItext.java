@@ -17,7 +17,7 @@ import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FilePdfItext implements AutoCloseable {
 
-    final private static TS_Log d = TS_Log.of(TS_FilePdfItext.class.getSimpleName());
+    final private static TS_Log d = TS_Log.of(TS_FilePdfItext.class);
 
 //    private static String GOOGLEPDF () "https://docs.google.com/gview?url=";
     public static BaseColor getFONT_COLOR_BLACK() {

@@ -21,7 +21,7 @@ import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FilePdfBoxUtils {
 
-    final private static TS_Log d = TS_Log.of(TS_FilePdfBoxUtils.class.getSimpleName());
+    final private static TS_Log d = TS_Log.of(TS_FilePdfBoxUtils.class);
 
     public static Path castFromPDFtoHTM(Path srcPDF, Path dstHTM, CharSequence optionalTitle, CharSequence optionalHeaderContent, CharSequence optional_iframe_video, boolean addLoader) {
         d.ci("castFromPDFtoHTM", srcPDF, dstHTM);
