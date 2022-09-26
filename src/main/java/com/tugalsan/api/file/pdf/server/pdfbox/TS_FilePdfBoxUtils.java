@@ -46,7 +46,7 @@ public class TS_FilePdfBoxUtils {
     private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
         return TGS_UnSafe.compile(() -> {
             d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
-            try ( var pdf = Loader.loadPDF(srcPDF.toFile());  var output = new PrintWriter(dstHTM.toFile(), TGS_CharSet.UTF8);) {
+            try ( var pdf = Loader.loadPDF(srcPDF.toFile());  var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
                 new PDFDomTree().writeText(pdf, output);
                 d.cr("castFromPDFtoHTM", "success");
             }
