@@ -419,7 +419,7 @@ public class TS_FilePdfItext implements AutoCloseable {
 
     public static Font getFontInternal(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
         int fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
-        return FontFactory.getFont(BaseFont.TIMES_ROMAN, TGS_CharacterSets.IBM_TURKISH(), true, fontSize, fontStyle, fontColor);
+        return FontFactory.getFont(BaseFont.TIMES_ROMAN, TGS_CharSet.IBM_TURKISH(), true, fontSize, fontStyle, fontColor);
         //return FontFactory.getFont("arialuni", "Cp857", true, fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
         //return FontFactory.getFont("arialuni", "Identity-H", fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
         //return FontFactory.getFont(FontFactory.HELVETICA, TK_GWTCharacterSets.DEFAULT, fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
