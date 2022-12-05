@@ -49,6 +49,19 @@ public class TS_FilePdfItextUtils {
         });
     }
 
+    public static void extract(Path pdfSrcFile, int[] pageNrs, Path pdfDstFile) {
+        TGS_UnSafe.execute(() -> {
+            try ( var zos = new FileOutputStream(pdfDstFile.toFile());  var reader = new TS_FilePdfItextPDFReaderAutoClosable(pdfSrcFile);  var document = new TS_FilePdfItextDocumentAutoClosable(reader.getPageSizeWithRotation(1));  var writer = new TS_FilePdfItextPDFCopyAutoClosable(document, zos);) {
+                document.open();
+                Arrays.stream(pageNrs).forEach(pageNr -> {
+                    TGS_UnSafe.execute(() -> {
+                        writer.addPage(writer.getImportedPage(reader, pageNr + 1));
+                    }, e -> e.printStackTrace());
+                });
+            }
+        });
+    }
+
     public static void rotate(Path pdfSrcFile, Path pdfDstFile, int degree) {
         TGS_UnSafe.execute(() -> {
             try ( var zos = new FileOutputStream(pdfDstFile.toFile());  var reader = new TS_FilePdfItextPDFReaderAutoClosable(pdfSrcFile);) {
