@@ -39,8 +39,7 @@ public class TS_FilePdfBoxUtils {
         if (optionalTitle != null) {
             strHtm = TS_FileHtmlUtils.updateTitleContent(strHtm, optionalTitle);
         }
-        TS_FileTxtUtils.toFile(strHtm, dstHTM, false);
-        return dstHTM;
+        return TS_FileTxtUtils.toFile(strHtm, dstHTM, false);
     }
 
     private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
