@@ -2,15 +2,49 @@ package com.tugalsan.api.file.pdf.server.itext;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
+import com.tugalsan.api.executable.client.TGS_ExecutableType1;
 
 public class TS_FilePdfItextDocumentAutoClosable extends Document implements AutoCloseable {
+
+//    public static Document use(TGS_ExecutableType1<Document> doc) {
+//        return use(null, null, null, null, null, doc);
+//    }
+//
+//    public static Document usePageAs(Rectangle pageSize, TGS_ExecutableType1<Document> doc) {
+//        return use(pageSize, null, null, null, null, doc);
+//    }
+//
+//    public static Document usePageAndMarginAs(Rectangle pageSize, float marginLeft, float marginRight, float marginTop, float marginBottom, TGS_ExecutableType1<Document> doc) {
+//        return use(pageSize, null, null, null, null, doc);
+//    }
+//
+//    private static Document use(Rectangle pageSize, Float marginLeft, Float marginRight, Float marginTop, Float marginBottom, TGS_ExecutableType1<Document> doc) {
+//        Document d = null;
+//        try {
+//            if (pageSize == null) {
+//                d = new Document();
+//            } else {
+//                if (marginLeft == null) {
+//                    d = new Document(pageSize);
+//                } else {
+//                    d = new Document(pageSize, marginLeft, marginRight, marginTop, marginBottom);
+//                }
+//            }
+//            doc.execute(d);
+//            return d;
+//        } finally {
+//            if (d != null) {
+//                d.close();
+//            }
+//        }
+//    }
 
     public TS_FilePdfItextDocumentAutoClosable() {
         super();
     }
 
-    public TS_FilePdfItextDocumentAutoClosable(Rectangle rect) {
-        super(rect);
+    public TS_FilePdfItextDocumentAutoClosable(Rectangle pageSize) {
+        super(pageSize);
     }
 
     public TS_FilePdfItextDocumentAutoClosable(Rectangle pageSize, float marginLeft, float marginRight, float marginTop, float marginBottom) {
@@ -21,5 +55,4 @@ public class TS_FilePdfItextDocumentAutoClosable extends Document implements Aut
     public void close() {
         super.close();
     }
-
 }
