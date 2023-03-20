@@ -45,7 +45,7 @@ public class TS_FilePdfBoxUtils {
     private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
         return TGS_UnSafe.compile(() -> {
             d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
-            try ( var pdf = Loader.loadPDF(srcPDF.toFile());  var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
+            try (var pdf = Loader.loadPDF(srcPDF.toFile()); var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
                 new PDFDomTree().writeText(pdf, output);
                 d.cr("castFromPDFtoHTM", "success");
             }
@@ -63,7 +63,7 @@ public class TS_FilePdfBoxUtils {
 
     public static void insertImage(PDDocument document, PDPage page, PDImageXObject pdImage, int offsetX, int offsetY, float scale) {
         TGS_UnSafe.execute(() -> {
-            try ( var contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+            try (var contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                 contentStream.drawImage(pdImage, offsetX, offsetY, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
             }
         });
@@ -98,7 +98,7 @@ public class TS_FilePdfBoxUtils {
                     new TGS_ShapeDimension(612, 792),
                     0.8f
             );
-            try ( var document = new PDDocument();) {
+            try (var document = new PDDocument();) {
                 var blankPage = new PDPage();
                 document.addPage(blankPage);
                 var pdImage = getImage(bi, document);
@@ -113,13 +113,13 @@ public class TS_FilePdfBoxUtils {
     }
 
     public static boolean isSupportedIMG(Path imgFile) {
-        var fn = imgFile.getFileName().toString().toLowerCase(Locale.ROOT);
+        var fn = TGS_CharSetCast.toLocaleLowerCase(imgFile.getFileName().toString());
         return fn.endsWith(".jpg") || fn.endsWith(".jpeg") || fn.endsWith(".tif") || fn.endsWith(".tiff") || fn.endsWith(".gif") || fn.endsWith(".bmp") || fn.endsWith(".png");
     }
 
     public static Path createPageBlank(Path path) {
         return TGS_UnSafe.compile(() -> {
-            try ( var document = new PDDocument();) {
+            try (var document = new PDDocument();) {
                 var blankPage = new PDPage();
                 document.addPage(blankPage);
                 document.save(path.toFile());
@@ -133,10 +133,10 @@ public class TS_FilePdfBoxUtils {
 
     public static Path createPageText(Path path, String text) {
         return TGS_UnSafe.compile(() -> {
-            try ( var document = new PDDocument();) {
+            try (var document = new PDDocument();) {
                 var page = new PDPage();
                 document.addPage(page);
-                try ( var contentStream = new PDPageContentStream(document, page);) {
+                try (var contentStream = new PDPageContentStream(document, page);) {
                     contentStream.beginText();
                     contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
                     contentStream.newLineAtOffset(100, 700);
