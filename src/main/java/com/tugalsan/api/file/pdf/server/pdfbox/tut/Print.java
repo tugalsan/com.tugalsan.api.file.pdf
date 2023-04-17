@@ -32,7 +32,7 @@ public final class Print {
      * Entry point.
      */
     public static void main(String[] args) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             if (args.length != 1) {
                 System.err.println("usage: java " + Print.class.getName() + " <input>");
                 System.exit(1);
@@ -55,7 +55,7 @@ public final class Print {
      * print.
      */
     private static void print(PDDocument document) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
             job.print();
@@ -66,7 +66,7 @@ public final class Print {
      * Prints using custom PrintRequestAttribute values.
      */
     private static void printWithAttributes(PDDocument document) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
 
@@ -81,7 +81,7 @@ public final class Print {
      * Prints with a print preview dialog.
      */
     private static void printWithDialog(PDDocument document) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
 
@@ -96,7 +96,7 @@ public final class Print {
      * values.
      */
     private static void printWithDialogAndAttributes(PDDocument document) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
 
@@ -125,7 +125,7 @@ public final class Print {
      * Prints using a custom page size and custom margins.
      */
     private static void printWithPaper(PDDocument document) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
 

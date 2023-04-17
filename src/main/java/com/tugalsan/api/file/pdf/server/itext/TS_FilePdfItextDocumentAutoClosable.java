@@ -2,23 +2,23 @@ package com.tugalsan.api.file.pdf.server.itext;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
-import com.tugalsan.api.executable.client.TGS_ExecutableType1;
+import com.tugalsan.api.runnable.client.TGS_RunnableType1;
 
 public class TS_FilePdfItextDocumentAutoClosable extends Document implements AutoCloseable {
 
-//    public static Document use(TGS_ExecutableType1<Document> doc) {
+//    public static Document use(TGS_RunnableType1<Document> doc) {
 //        return use(null, null, null, null, null, doc);
 //    }
 //
-//    public static Document usePageAs(Rectangle pageSize, TGS_ExecutableType1<Document> doc) {
+//    public static Document usePageAs(Rectangle pageSize, TGS_RunnableType1<Document> doc) {
 //        return use(pageSize, null, null, null, null, doc);
 //    }
 //
-//    public static Document usePageAndMarginAs(Rectangle pageSize, float marginLeft, float marginRight, float marginTop, float marginBottom, TGS_ExecutableType1<Document> doc) {
+//    public static Document usePageAndMarginAs(Rectangle pageSize, float marginLeft, float marginRight, float marginTop, float marginBottom, TGS_RunnableType1<Document> doc) {
 //        return use(pageSize, null, null, null, null, doc);
 //    }
 //
-//    private static Document use(Rectangle pageSize, Float marginLeft, Float marginRight, Float marginTop, Float marginBottom, TGS_ExecutableType1<Document> doc) {
+//    private static Document use(Rectangle pageSize, Float marginLeft, Float marginRight, Float marginTop, Float marginBottom, TGS_RunnableType1<Document> doc) {
 //        Document d = null;
 //        try {
 //            if (pageSize == null) {
@@ -30,7 +30,7 @@ public class TS_FilePdfItextDocumentAutoClosable extends Document implements Aut
 //                    d = new Document(pageSize, marginLeft, marginRight, marginTop, marginBottom);
 //                }
 //            }
-//            doc.execute(d);
+//            doc.run(d);
 //            return d;
 //        } finally {
 //            if (d != null) {

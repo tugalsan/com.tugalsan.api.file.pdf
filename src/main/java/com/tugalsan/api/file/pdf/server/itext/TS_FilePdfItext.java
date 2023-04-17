@@ -140,7 +140,7 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void createNewPage(int pageSizeAX0, boolean landscape, Integer marginLeft0, Integer marginRight0, Integer marginTop0, Integer marginBottom0) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             d.ci("createNewPage");
             var marginLeft = marginLeft0 == null ? 50 : marginLeft0;
             var marginRight = marginRight0 == null ? 10 : marginRight0;
@@ -216,11 +216,11 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public Image createImage(java.awt.Image imageFile, Color color) {
-        return TGS_UnSafe.compile(() -> Image.getInstance(imageFile, color));
+        return TGS_UnSafe.call(() -> Image.getInstance(imageFile, color));
     }
 
     public Image createImage(CharSequence filePath) {
-        return TGS_UnSafe.compile(() -> Image.getInstance(filePath.toString()));
+        return TGS_UnSafe.call(() -> Image.getInstance(filePath.toString()));
     }
 
     public void addImageToPageLeft(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
@@ -228,9 +228,9 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void addImageToPageLeft(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             if (image == null) {
-                TGS_UnSafe.catchMeIfUCan(d.className, "addImageToPageLeft", "image == null");
+                TGS_UnSafe.thrw(d.className, "addImageToPageLeft", "image == null");
             }
             if (textWrap) {
                 image.setAlignment(Image.ALIGN_LEFT | Image.TEXTWRAP);
@@ -246,9 +246,9 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void addImageToPageRight(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             if (image == null) {
-                TGS_UnSafe.catchMeIfUCan(d.className, "addImageToPageRight", "image == null");
+                TGS_UnSafe.thrw(d.className, "addImageToPageRight", "image == null");
             }
             if (textWrap) {
                 image.setAlignment(Image.ALIGN_RIGHT | Image.TEXTWRAP);
@@ -264,9 +264,9 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void addImageToPageCenter(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             if (image == null) {
-                TGS_UnSafe.catchMeIfUCan(d.className, "addImageToPageCenter", "image == null");
+                TGS_UnSafe.thrw(d.className, "addImageToPageCenter", "image == null");
             }
             if (textWrap) {
                 image.setAlignment(Image.ALIGN_CENTER | Image.TEXTWRAP);
@@ -340,11 +340,11 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public void addParagraphToPage(Paragraph p) {
-        TGS_UnSafe.execute(() -> document.add(p));
+        TGS_UnSafe.run(() -> document.add(p));
     }
 
     public void addTableToPage(PdfPTable table) {
-        TGS_UnSafe.execute(() -> document.add(table));
+        TGS_UnSafe.run(() -> document.add(table));
     }
 
     public void addCellToTable(PdfPTable table, PdfPCell cell, int rotation_0_90_180_270) {
@@ -361,7 +361,7 @@ public class TS_FilePdfItext implements AutoCloseable {
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
             return new Font(
-                    TGS_UnSafe.compile(() -> {
+                    TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
                                 fontPathBoldItalic.toAbsolutePath().normalize().toString(),
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
@@ -377,7 +377,7 @@ public class TS_FilePdfItext implements AutoCloseable {
                     return getFontInternal(fontSize, bold, italic, fontColor);
                 }
                 return new Font(
-                        TGS_UnSafe.compile(() -> {
+                        TGS_UnSafe.call(() -> {
                             return BaseFont.createFont(
                                     fontPathBold.toAbsolutePath().normalize().toString(),
                                     BaseFont.IDENTITY_H, BaseFont.EMBEDDED
@@ -393,7 +393,7 @@ public class TS_FilePdfItext implements AutoCloseable {
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
             return new Font(
-                    TGS_UnSafe.compile(() -> {
+                    TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
                                 fontPathItalic.toAbsolutePath().normalize().toString(),
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
@@ -407,7 +407,7 @@ public class TS_FilePdfItext implements AutoCloseable {
             return getFontInternal(fontSize, bold, italic, fontColor);
         }
         return new Font(
-                TGS_UnSafe.compile(() -> {
+                TGS_UnSafe.call(() -> {
                     return BaseFont.createFont(
                             fontPathRegular.toAbsolutePath().normalize().toString(),
                             BaseFont.IDENTITY_H, BaseFont.EMBEDDED
@@ -477,9 +477,9 @@ public class TS_FilePdfItext implements AutoCloseable {
 
     @Override
     public void close() {
-        TGS_UnSafe.execute(() -> closeFix(), e -> d.ct("close.closeFix", e));
-        TGS_UnSafe.execute(() -> document.close(), e -> d.ct("close.document", e));
-        TGS_UnSafe.execute(() -> writer.close(), e -> d.ct("close.writer", e));
+        TGS_UnSafe.run(() -> closeFix(), e -> d.ct("close.closeFix", e));
+        TGS_UnSafe.run(() -> document.close(), e -> d.ct("close.document", e));
+        TGS_UnSafe.run(() -> writer.close(), e -> d.ct("close.writer", e));
     }
 
     private void closeFix() {

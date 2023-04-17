@@ -16,7 +16,7 @@ public class TS_FilePdfItextPDFWriter extends PdfWriter implements AutoCloseable
     }
 
     public static TS_FilePdfItextPDFWriter getInstance(TS_FilePdfItextDocumentAutoClosable document, OutputStream os) {
-        return TGS_UnSafe.compile(() -> {
+        return TGS_UnSafe.call(() -> {
             //dont tryy to autoclose!
             var pdf = new TS_FilePdfItextPdfDocument();
             document.addDocListener(pdf);

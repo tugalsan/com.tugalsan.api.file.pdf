@@ -16,7 +16,7 @@ import com.tugalsan.api.unsafe.client.*;
 public class EmbeddedFiles {
 
     public static void EmbeddedFiles(String file) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( PDDocument doc = new PDDocument()) {
                 PDPage page = new PDPage();
                 doc.addPage(page);
@@ -74,7 +74,7 @@ public class EmbeddedFiles {
     }
 
     public static void ExtractEmbeddedFiles(String file) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             File pdfFile = new File(file);
             String filePath = pdfFile.getParent() + System.getProperty("file.separator");
             try ( PDDocument document = Loader.loadPDF(new File(filePath))) {
@@ -94,7 +94,7 @@ public class EmbeddedFiles {
     }
 
     private static void extractFilesFromPage(PDPage page, String filePath) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             for (PDAnnotation annotation : page.getAnnotations()) {
                 if (annotation instanceof PDAnnotationFileAttachment) {
                     PDAnnotationFileAttachment annotationFileAttachment = (PDAnnotationFileAttachment) annotation;
@@ -112,7 +112,7 @@ public class EmbeddedFiles {
     }
 
     private static void extractFilesFromEFTree(PDEmbeddedFilesNameTreeNode efTree, String filePath) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             Map<String, PDComplexFileSpecification> names = efTree.getNames();
             if (names != null) {
                 extractFiles(names, filePath);
@@ -137,7 +137,7 @@ public class EmbeddedFiles {
     }
 
     private static void extractFile(String filePath, String filename, PDEmbeddedFile embeddedFile) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             String embeddedFilename = filePath + filename;
             File file = new File(filePath + filename);
             System.out.println("Writing " + embeddedFilename);

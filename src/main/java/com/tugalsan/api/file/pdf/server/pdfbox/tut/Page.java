@@ -16,7 +16,7 @@ import org.apache.pdfbox.util.Matrix;
 public class Page {
 
     public static void AddMessageToEachPage(String infile, String message, String outfile) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( var doc = Loader.loadPDF(new File(infile))) {
                 PDFont font = PDType1Font.HELVETICA_BOLD;
                 float fontSize = 36.0f;
@@ -56,7 +56,7 @@ public class Page {
     }
 
     public static void CreateBlankPDF(String inputFile) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( var doc = new PDDocument()) {
                 // a valid PDF document requires at least one page
                 PDPage blankPage = new PDPage();
@@ -67,7 +67,7 @@ public class Page {
     }
 
     public static void CreateLandscapePDF(String message, String outfile) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( var doc = new PDDocument()) {
                 var font = PDType1Font.HELVETICA;
                 var page = new PDPage(PDRectangle.A4);
@@ -117,13 +117,13 @@ public class Page {
     }
 
     public static void RemoveFirstPage(String filePath) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( var document = Loader.loadPDF(new File(filePath))) {
                 if (document.isEncrypted()) {
-                    TGS_UnSafe.catchMeIfUCan(Page.class.getSimpleName(), "RemoveFirstPage", "Encrypted documents are not supported for this example");
+                    TGS_UnSafe.thrw(Page.class.getSimpleName(), "RemoveFirstPage", "Encrypted documents are not supported for this example");
                 }
                 if (document.getNumberOfPages() <= 1) {
-                    TGS_UnSafe.catchMeIfUCan(Page.class.getSimpleName(), "RemoveFirstPage", "Error: A PDF document must have at least one page, cannot remove the last page!");
+                    TGS_UnSafe.thrw(Page.class.getSimpleName(), "RemoveFirstPage", "Error: A PDF document must have at least one page, cannot remove the last page!");
                 }
                 document.removePage(0);
                 document.save(filePath);

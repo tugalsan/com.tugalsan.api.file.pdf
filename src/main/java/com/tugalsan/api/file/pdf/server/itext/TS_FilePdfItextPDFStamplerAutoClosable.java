@@ -22,6 +22,6 @@ public class TS_FilePdfItextPDFStamplerAutoClosable extends PdfStamper implement
 
     @Override
     public void close() {
-        TGS_UnSafe.execute(() -> super.close());
+        TGS_UnSafe.run(() -> super.close());
     }
 }

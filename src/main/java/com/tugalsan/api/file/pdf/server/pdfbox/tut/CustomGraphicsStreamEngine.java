@@ -44,7 +44,7 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
     }
 
     public static void main(String[] args) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             File file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
                     "custom-render-demo.pdf");
 
@@ -62,7 +62,7 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
      * @throws IOException If there is an IO error while drawing the page.
      */
     public void run() {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             processPage(getPage());
             for (PDAnnotation annotation : getPage().getAnnotations()) {
                 showAnnotation(annotation);
@@ -143,7 +143,7 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
      */
     @Override
     public void showTextString(byte[] string) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             System.out.print("showTextString \"");
             super.showTextString(string);
             System.out.println("\"");
@@ -155,7 +155,7 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
      */
     @Override
     public void showTextStrings(COSArray array) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             System.out.print("showTextStrings \"");
             super.showTextStrings(array);
             System.out.println("\"");
@@ -167,7 +167,7 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
      */
     @Override
     protected void showGlyph(Matrix textRenderingMatrix, PDFont font, int code, Vector displacement) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             System.out.print("showGlyph " + code);
             super.showGlyph(textRenderingMatrix, font, code, displacement);
         });

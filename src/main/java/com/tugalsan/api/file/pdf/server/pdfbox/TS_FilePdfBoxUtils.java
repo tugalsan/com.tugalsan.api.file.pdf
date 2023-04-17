@@ -43,7 +43,7 @@ public class TS_FilePdfBoxUtils {
     }
 
     private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
-        return TGS_UnSafe.compile(() -> {
+        return TGS_UnSafe.call(() -> {
             d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
             try (var pdf = Loader.loadPDF(srcPDF.toFile()); var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
                 new PDFDomTree().writeText(pdf, output);
@@ -54,15 +54,15 @@ public class TS_FilePdfBoxUtils {
     }
 
     public static PDImageXObject getImage(Path imgFile, PDDocument document) {
-        return TGS_UnSafe.compile(() -> PDImageXObject.createFromFile(imgFile.toAbsolutePath().toString(), document));
+        return TGS_UnSafe.call(() -> PDImageXObject.createFromFile(imgFile.toAbsolutePath().toString(), document));
     }
 
     public static PDImageXObject getImage(BufferedImage bi, PDDocument document) {
-        return TGS_UnSafe.compile(() -> LosslessFactory.createFromImage(document, bi));
+        return TGS_UnSafe.call(() -> LosslessFactory.createFromImage(document, bi));
     }
 
     public static void insertImage(PDDocument document, PDPage page, PDImageXObject pdImage, int offsetX, int offsetY, float scale) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try (var contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                 contentStream.drawImage(pdImage, offsetX, offsetY, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
             }
@@ -91,7 +91,7 @@ public class TS_FilePdfBoxUtils {
     }
 
     public static Path castFromIMGtoPDF_A4PORT(Path srcIMG, Path dstPDF) {
-        return TGS_UnSafe.compile(() -> {
+        return TGS_UnSafe.call(() -> {
             d.cr("castFromJPGtoPDF", "init", srcIMG, dstPDF);
             TS_FileUtils.deleteFileIfExists(dstPDF);
             var bi = TS_FileImageUtils.autoSizeRespectfully(TS_FileImageUtils.readImageFromFile(srcIMG, true),
@@ -108,7 +108,7 @@ public class TS_FilePdfBoxUtils {
             return dstPDF;
         }, e -> {
             d.ce("castFromIMGtoPDF_A4PORT", "failed", e.getMessage());
-            return TGS_UnSafe.catchMeIfUCanReturns(e);
+            return TGS_UnSafe.thrwReturns(e);
         });
     }
 
@@ -118,7 +118,7 @@ public class TS_FilePdfBoxUtils {
     }
 
     public static Path createPageBlank(Path path) {
-        return TGS_UnSafe.compile(() -> {
+        return TGS_UnSafe.call(() -> {
             try (var document = new PDDocument();) {
                 var blankPage = new PDPage();
                 document.addPage(blankPage);
@@ -127,12 +127,12 @@ public class TS_FilePdfBoxUtils {
             }
         }, e -> {
             d.ce("createPageBlank", "failed", e.getMessage());
-            return TGS_UnSafe.catchMeIfUCanReturns(e);
+            return TGS_UnSafe.thrwReturns(e);
         });
     }
 
     public static Path createPageText(Path path, String text) {
-        return TGS_UnSafe.compile(() -> {
+        return TGS_UnSafe.call(() -> {
             try (var document = new PDDocument();) {
                 var page = new PDPage();
                 document.addPage(page);
@@ -148,7 +148,7 @@ public class TS_FilePdfBoxUtils {
             }
         }, e -> {
             d.ce("createPageText", "failed", e.getMessage());
-            return TGS_UnSafe.catchMeIfUCanReturns(e);
+            return TGS_UnSafe.thrwReturns(e);
         });
     }
 }

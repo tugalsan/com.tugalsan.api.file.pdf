@@ -12,7 +12,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 public class Image {
 
     public static void ImageToPDF(String imagePath, String pdfPath) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             if (!pdfPath.endsWith(".pdf")) {
                 System.err.println("Last argument must be the destination .pdf file");
                 System.exit(1);
@@ -41,7 +41,7 @@ public class Image {
     }
 
     public static void AddImageToPDF(String inputFile, String imagePath, String outputFile) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( PDDocument doc = Loader.loadPDF(new File(inputFile))) {
                 //we will add the image to the first page.
                 PDPage page = doc.getPage(0);

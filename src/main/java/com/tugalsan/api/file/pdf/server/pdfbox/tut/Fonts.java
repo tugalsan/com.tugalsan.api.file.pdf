@@ -16,7 +16,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 public class Fonts {
 
     public static void HelloWorldType1(String message, String file, String pfbPath) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( PDDocument doc = new PDDocument()) {
                 PDPage page = new PDPage();
                 doc.addPage(page);
@@ -41,7 +41,7 @@ public class Fonts {
     }
 
     public static void HelloWorldTTF(String message, String pdfPath, String ttfPath) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( PDDocument doc = new PDDocument()) {
                 PDPage page = new PDPage();
                 doc.addPage(page);
@@ -63,7 +63,7 @@ public class Fonts {
     }
 
     public static void EmbeddedFonts(String file) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( PDDocument document = new PDDocument()) {
                 PDPage page = new PDPage(PDRectangle.A4);
                 document.addPage(page);

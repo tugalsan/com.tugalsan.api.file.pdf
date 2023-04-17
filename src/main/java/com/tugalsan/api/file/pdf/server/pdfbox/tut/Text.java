@@ -14,7 +14,7 @@ import com.tugalsan.api.unsafe.client.*;
 public class Text {
 
     public static void ShowTextWithPositioning(String message, String outfile, float fontSize_20) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             // the document
             try ( PDDocument doc = new PDDocument();  InputStream is = PDDocument.class.getResourceAsStream("/org/apache/pdfbox/resources/ttf/LiberationSans-Regular.ttf")) {
                 // Page 1
@@ -124,7 +124,7 @@ public class Text {
     }
 
     public static void HelloWorld(String message, String filename) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             try ( PDDocument doc = new PDDocument()) {
                 PDPage page = new PDPage();
                 doc.addPage(page);

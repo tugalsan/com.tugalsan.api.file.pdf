@@ -31,7 +31,7 @@ import org.apache.pdfbox.util.Vector;
 public class CustomPageDrawer {
 
     public static void main(String[] args) {
-        TGS_UnSafe.execute(() -> {
+        TGS_UnSafe.run(() -> {
             var file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
                     "custom-render-demo.pdf");
 
@@ -72,7 +72,7 @@ public class CustomPageDrawer {
          */
         @Override
         protected Paint getPaint(PDColor color) {
-            return TGS_UnSafe.compile(() -> {
+            return TGS_UnSafe.call(() -> {
                 // if this is the non-stroking color, find red, ignoring alpha channel
                 if (getGraphicsState().getNonStrokingColor() == color
                         && color.toRGB() == (Color.RED.getRGB() & 0x00FFFFFF)) {
@@ -88,7 +88,7 @@ public class CustomPageDrawer {
          */
         @Override
         protected void showGlyph(Matrix textRenderingMatrix, PDFont font, int code, Vector displacement) {
-            TGS_UnSafe.execute(() -> {
+            TGS_UnSafe.run(() -> {
                 // draw glyph
                 super.showGlyph(textRenderingMatrix, font, code, displacement);
 
@@ -121,7 +121,7 @@ public class CustomPageDrawer {
          */
         @Override
         public void fillPath(int windingRule) {
-            TGS_UnSafe.execute(() -> {
+            TGS_UnSafe.run(() -> {
                 // bbox in user units
                 Shape bbox = getLinePath().getBounds2D();
 
@@ -152,7 +152,7 @@ public class CustomPageDrawer {
          */
         @Override
         public void showAnnotation(PDAnnotation annotation) {
-            TGS_UnSafe.execute(() -> {
+            TGS_UnSafe.run(() -> {
                 // save
                 saveGraphicsState();
 
