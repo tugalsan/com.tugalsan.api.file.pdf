@@ -21,7 +21,7 @@ public class EmbeddedFiles {
             try (PDDocument doc = new PDDocument()) {
                 PDPage page = new PDPage();
                 doc.addPage(page);
-                PDFont font = PDType1Font.HELVETICA_BOLD;
+                PDFont font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
 
                 try (PDPageContentStream contentStream = new PDPageContentStream(doc, page)) {
                     contentStream.beginText();

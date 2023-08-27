@@ -129,7 +129,7 @@ public class Text {
                 PDPage page = new PDPage();
                 doc.addPage(page);
 
-                PDFont font = PDType1Font.HELVETICA_BOLD;
+                PDFont font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
 
                 try ( PDPageContentStream contents = new PDPageContentStream(doc, page)) {
                     contents.beginText();

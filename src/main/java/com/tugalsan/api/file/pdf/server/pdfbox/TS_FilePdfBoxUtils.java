@@ -11,7 +11,6 @@ import org.apache.pdfbox.pdmodel.graphics.image.*;
 import org.apache.pdfbox.pdmodel.*;
 import org.fit.pdfdom.*;
 import com.tugalsan.api.charset.client.*;
-import com.tugalsan.api.file.html.server.element.*;
 import com.tugalsan.api.file.img.server.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.file.txt.server.*;
@@ -140,8 +139,7 @@ public class TS_FilePdfBoxUtils {
                 document.addPage(page);
                 try (var contentStream = new PDPageContentStream(document, page);) {
                     contentStream.beginText();
-                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-//                    contentStream.setFont(Standard14Fonts.FontName.HELVETICA_BOLD, 12);
+                    contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
                     contentStream.newLineAtOffset(100, 700);
                     contentStream.showText("Hello World");
                     contentStream.endText();

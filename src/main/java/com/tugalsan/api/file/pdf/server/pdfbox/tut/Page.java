@@ -12,6 +12,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.util.Matrix;
 
 public class Page {
@@ -19,7 +20,7 @@ public class Page {
     public static void AddMessageToEachPage(String infile, String message, String outfile) {
         TGS_UnSafe.run(() -> {
             try ( var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(infile))) {
-                PDFont font = PDType1Font.HELVETICA_BOLD;
+                PDFont font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
                 float fontSize = 36.0f;
 
                 for (PDPage page : doc.getPages()) {
@@ -70,7 +71,7 @@ public class Page {
     public static void CreateLandscapePDF(String message, String outfile) {
         TGS_UnSafe.run(() -> {
             try ( var doc = new PDDocument()) {
-                var font = PDType1Font.HELVETICA;
+                var font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
                 var page = new PDPage(PDRectangle.A4);
                 page.setRotation(90);
                 doc.addPage(page);
