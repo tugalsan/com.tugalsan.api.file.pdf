@@ -19,6 +19,7 @@ import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.shape.client.*;
 import com.tugalsan.api.unsafe.client.*;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 
 public class TS_FilePdfBoxUtils {
 
@@ -46,7 +47,7 @@ public class TS_FilePdfBoxUtils {
     private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
         return TGS_UnSafe.call(() -> {
             d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
-            try (var pdf = Loader.loadPDF(srcPDF.toFile()); var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
+            try (var pdf = Loader.loadPDF(new RandomAccessReadBufferedFile(srcPDF.toFile())); var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
                 new PDFDomTree().writeText(pdf, output);
                 d.cr("castFromPDFtoHTM", "success");
             }
@@ -140,6 +141,7 @@ public class TS_FilePdfBoxUtils {
                 try (var contentStream = new PDPageContentStream(document, page);) {
                     contentStream.beginText();
                     contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+//                    contentStream.setFont(Standard14Fonts.FontName.HELVETICA_BOLD, 12);
                     contentStream.newLineAtOffset(100, 700);
                     contentStream.showText("Hello World");
                     contentStream.endText();

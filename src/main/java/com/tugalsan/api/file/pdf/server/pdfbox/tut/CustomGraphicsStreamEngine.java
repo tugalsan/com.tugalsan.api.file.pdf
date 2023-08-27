@@ -14,6 +14,7 @@ import org.apache.pdfbox.contentstream.PDFGraphicsStreamEngine;
 import org.apache.pdfbox.contentstream.PDFStreamEngine;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -48,7 +49,7 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
             File file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
                     "custom-render-demo.pdf");
 
-            try ( PDDocument doc = Loader.loadPDF(file)) {
+            try ( PDDocument doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
                 PDPage page = doc.getPage(0);
                 CustomGraphicsStreamEngine engine = new CustomGraphicsStreamEngine(page);
                 engine.run();

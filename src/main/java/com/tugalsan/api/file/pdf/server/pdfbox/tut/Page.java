@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -17,7 +18,7 @@ public class Page {
 
     public static void AddMessageToEachPage(String infile, String message, String outfile) {
         TGS_UnSafe.run(() -> {
-            try ( var doc = Loader.loadPDF(new File(infile))) {
+            try ( var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(infile))) {
                 PDFont font = PDType1Font.HELVETICA_BOLD;
                 float fontSize = 36.0f;
 
@@ -118,7 +119,7 @@ public class Page {
 
     public static void RemoveFirstPage(String filePath) {
         TGS_UnSafe.run(() -> {
-            try ( var document = Loader.loadPDF(new File(filePath))) {
+            try ( var document = Loader.loadPDF(new RandomAccessReadBufferedFile(filePath))) {
                 if (document.isEncrypted()) {
                     TGS_UnSafe.thrw(Page.class.getSimpleName(), "RemoveFirstPage", "Encrypted documents are not supported for this example");
                 }

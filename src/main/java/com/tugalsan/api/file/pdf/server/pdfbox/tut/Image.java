@@ -1,9 +1,8 @@
 package com.tugalsan.api.file.pdf.server.pdfbox.tut;
 
 import com.tugalsan.api.unsafe.client.*;
-import java.io.File;
-import java.io.IOException;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -42,7 +41,7 @@ public class Image {
 
     public static void AddImageToPDF(String inputFile, String imagePath, String outputFile) {
         TGS_UnSafe.run(() -> {
-            try ( PDDocument doc = Loader.loadPDF(new File(inputFile))) {
+            try ( PDDocument doc = Loader.loadPDF(new RandomAccessReadBufferedFile(inputFile))) {
                 //we will add the image to the first page.
                 PDPage page = doc.getPage(0);
 

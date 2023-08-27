@@ -12,17 +12,18 @@ import org.apache.pdfbox.pdmodel.font.*;
 import org.apache.pdfbox.pdmodel.interactive.annotation.*;
 import com.tugalsan.api.list.client.*;
 import com.tugalsan.api.unsafe.client.*;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 
 public class EmbeddedFiles {
 
     public static void EmbeddedFiles(String file) {
         TGS_UnSafe.run(() -> {
-            try ( PDDocument doc = new PDDocument()) {
+            try (PDDocument doc = new PDDocument()) {
                 PDPage page = new PDPage();
                 doc.addPage(page);
                 PDFont font = PDType1Font.HELVETICA_BOLD;
 
-                try ( PDPageContentStream contentStream = new PDPageContentStream(doc, page)) {
+                try (PDPageContentStream contentStream = new PDPageContentStream(doc, page)) {
                     contentStream.beginText();
                     contentStream.setFont(font, 12);
                     contentStream.newLineAtOffset(100, 700);
@@ -77,7 +78,7 @@ public class EmbeddedFiles {
         TGS_UnSafe.run(() -> {
             File pdfFile = new File(file);
             String filePath = pdfFile.getParent() + System.getProperty("file.separator");
-            try ( PDDocument document = Loader.loadPDF(new File(filePath))) {
+            try (PDDocument document = Loader.loadPDF(new RandomAccessReadBufferedFile(filePath))) {
                 PDDocumentNameDictionary namesDictionary
                         = new PDDocumentNameDictionary(document.getDocumentCatalog());
                 PDEmbeddedFilesNameTreeNode efTree = namesDictionary.getEmbeddedFiles();
@@ -141,7 +142,7 @@ public class EmbeddedFiles {
             String embeddedFilename = filePath + filename;
             File file = new File(filePath + filename);
             System.out.println("Writing " + embeddedFilename);
-            try ( var fos = new FileOutputStream(file)) {
+            try (var fos = new FileOutputStream(file)) {
                 fos.write(embeddedFile.toByteArray());
             }
         });

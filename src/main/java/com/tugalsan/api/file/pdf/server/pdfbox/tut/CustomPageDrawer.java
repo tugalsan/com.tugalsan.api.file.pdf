@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.contentstream.PDFGraphicsStreamEngine;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
@@ -35,7 +36,7 @@ public class CustomPageDrawer {
             var file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
                     "custom-render-demo.pdf");
 
-            try ( var doc = Loader.loadPDF(file)) {
+            try ( var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
                 var renderer = new MyPDFRenderer(doc);
                 var image = renderer.renderImage(0);
                 ImageIO.write(image, "PNG", new File("custom-render.png"));

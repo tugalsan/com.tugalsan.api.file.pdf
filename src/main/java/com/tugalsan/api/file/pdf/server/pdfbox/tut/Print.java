@@ -13,6 +13,7 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.PageRanges;
 import javax.print.attribute.standard.Sides;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
@@ -39,7 +40,7 @@ public final class Print {
             }
 
             String filename = args[0];
-            try ( PDDocument document = Loader.loadPDF(new File(filename))) {
+            try ( PDDocument document = Loader.loadPDF(new RandomAccessReadBufferedFile(filename))) {
                 // choose your printing method:
                 print(document);
                 //printWithAttributes(document);
