@@ -1,12 +1,13 @@
 module com.tugalsan.api.file.pdf {
     requires java.desktop;
     requires itextpdf;
-    //requires pdfbox;
+    requires jai.imageio.core;
     requires org.apache.pdfbox; //TODO https://stackoverflow.com/questions/18189314/convert-a-pdf-file-to-image
     requires org.apache.pdfbox.io;
     requires net.sf.cssbox.pdf2dom;
     requires com.tugalsan.api.unsafe;
     requires com.tugalsan.api.runnable;
+    requires com.tugalsan.api.stream;
     requires com.tugalsan.api.coronator;
     requires com.tugalsan.api.validator;
     requires com.tugalsan.api.callable;

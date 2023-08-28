@@ -124,15 +124,19 @@ public class TS_FilePdfItext implements AutoCloseable {
         return PageSize.A6;
     }
 
-    public Path getFile() {
-        return file;
-    }
-
     public TS_FilePdfItextPDFWriter getWriter() {
         return writer;
     }
     private TS_FilePdfItextPDFWriter writer;
+
+    public Document getDocument() {
+        return document;
+    }
     private TS_FilePdfItextDocumentAutoClosable document;
+
+    public Path getFile() {
+        return file;
+    }
     private final Path file;
 
     public TS_FilePdfItext(Path file) {
@@ -492,7 +496,4 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
     public boolean skipCloseFix = true;
 
-    public Document getDocument() {
-        return document;
-    }
 }
