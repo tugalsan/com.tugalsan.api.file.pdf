@@ -311,6 +311,14 @@ public class TS_FilePdfBoxUtils {
     }
 
     public static Path castFromPDFtoHTM(Path srcPDF, Path dstHTM, CharSequence optionalTitle, CharSequence optionalHeaderContent, CharSequence optional_iframe_video, boolean addLoader) {
+        if (true) {
+            return TS_FileTxtUtils.toFile("""
+            PDF'den HTM ön izlene dosyası oluşturuken bir hata oluştu. Lütfen orjinal pdf dosyayı indiriniz.<br>
+            An error occured creating HTM preview file from PDF. Please download the original pdf file.<br>
+            <br>
+            %s
+            """.formatted("ERROR: org.apache.pdfbox version incompatible; disabled until further notice!"), dstHTM, false);
+        }
         d.ci("castFromPDFtoHTM", srcPDF, dstHTM);
         castFromPDFtoHTM_do(srcPDF, dstHTM);
         var strHtm = TS_FileTxtUtils.toString(dstHTM);
@@ -337,12 +345,7 @@ public class TS_FilePdfBoxUtils {
                 d.cr("castFromPDFtoHTM", "success");
             }
             return dstHTM;
-        }, e -> TS_FileTxtUtils.toFile("""
-                                      PDF'den HTM ön izlene dosyası oluşturuken bir hata oluştu. Lütfen orjinal pdf dosyayı indiriniz.<br>
-                                      An error occured creating HTM preview file from PDF. Please download the original pdf file.<br>
-                                      <br>
-                                      %s
-                                      """.formatted(e.toString()), dstHTM, false));
+        });
     }
 
     public static PDImageXObject getImage(Path imgFile, PDDocument document) {
