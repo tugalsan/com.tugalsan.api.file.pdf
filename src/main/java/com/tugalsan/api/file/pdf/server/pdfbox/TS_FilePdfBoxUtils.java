@@ -40,9 +40,9 @@ import org.apache.pdfbox.util.Matrix;
 import org.fit.pdfdom.PDFDomTree;
 
 public class TS_FilePdfBoxUtils {
-    
+
     final private static TS_Log d = TS_Log.of(TS_FilePdfBoxUtils.class);
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static Optional<Path> toJpg(Path pdfSrcFile, Path jpgDstFile, int pageNumber) {
         return TGS_UnSafe.call(() -> {
@@ -64,7 +64,7 @@ public class TS_FilePdfBoxUtils {
             return Optional.empty();
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static boolean combine(List<Path> pdfSrcFiles, Path pdfDstFile) {
         return TGS_UnSafe.call(() -> {
@@ -84,7 +84,7 @@ public class TS_FilePdfBoxUtils {
             return false;
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static Optional<Integer> size(Path pdfFile) {
         return TGS_UnSafe.call(() -> {
@@ -96,7 +96,7 @@ public class TS_FilePdfBoxUtils {
             return Optional.empty();
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static boolean extract(Path pdfSrcFile, int pageNr, Path pdfDstFile) {
         return TGS_UnSafe.call(() -> {
@@ -125,7 +125,7 @@ public class TS_FilePdfBoxUtils {
             return false;
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static boolean extract(Path pdfSrcFile, int[] pageNrs, Path pdfDstFile) {
         return TGS_UnSafe.call(() -> {
@@ -152,7 +152,7 @@ public class TS_FilePdfBoxUtils {
             return TS_FileUtils.isExistFile(pdfDstFile);
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static void rotatePage(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
         TGS_UnSafe.run(() -> {
@@ -164,7 +164,7 @@ public class TS_FilePdfBoxUtils {
             }
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static void rotateWithCropBox(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
         TGS_UnSafe.run(() -> {
@@ -183,7 +183,7 @@ public class TS_FilePdfBoxUtils {
             }
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static void rotateAndFitContent(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
         TGS_UnSafe.run(() -> {
@@ -205,7 +205,7 @@ public class TS_FilePdfBoxUtils {
             }
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static void scale(Path pdfSrcFile, Path pdfDstFile, float xScale, float yScale) {
         TGS_UnSafe.run(() -> {
@@ -220,7 +220,7 @@ public class TS_FilePdfBoxUtils {
             }
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static void scaleToA4(Path pdfSrcFile, Path pdfDstFile, float scaleFactor) {
         TGS_UnSafe.run(() -> {
@@ -237,7 +237,7 @@ public class TS_FilePdfBoxUtils {
             }
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static void compress(Path pdfSrcFile, Path pdfDstFile, float compQual_fr0_to1, boolean lossless) {
         TGS_UnSafe.run(() -> {
@@ -267,7 +267,7 @@ public class TS_FilePdfBoxUtils {
             }
         });
     }
-    
+
     @Deprecated //TODO: I just wrote it. Not Tested!
     private static void compress_scanResources(
             final PDResources rList,
@@ -309,7 +309,7 @@ public class TS_FilePdfBoxUtils {
             rList.put(xName, imgNew);
         }
     }
-    
+
     public static Path castFromPDFtoHTM(Path srcPDF, Path dstHTM, CharSequence optionalTitle, CharSequence optionalHeaderContent, CharSequence optional_iframe_video, boolean addLoader) {
         d.ci("castFromPDFtoHTM", srcPDF, dstHTM);
         castFromPDFtoHTM_do(srcPDF, dstHTM);
@@ -328,7 +328,7 @@ public class TS_FilePdfBoxUtils {
         }
         return TS_FileTxtUtils.toFile(strHtm, dstHTM, false);
     }
-    
+
     private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
         return TGS_UnSafe.call(() -> {
             d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
@@ -337,17 +337,22 @@ public class TS_FilePdfBoxUtils {
                 d.cr("castFromPDFtoHTM", "success");
             }
             return dstHTM;
-        });
+        }, e -> TS_FileTxtUtils.toFile("""
+                                      PDF'den HTM ön izlene dosyası oluşturuken bir hata oluştu. Lütfen orjinal pdf dosyayı indiriniz.<br>
+                                      An error occured creating HTM preview file from PDF. Please download the original pdf file.<br>
+                                      <br>
+                                      %s
+                                      """.formatted(e.toString()), dstHTM, false));
     }
-    
+
     public static PDImageXObject getImage(Path imgFile, PDDocument document) {
         return TGS_UnSafe.call(() -> PDImageXObject.createFromFile(imgFile.toAbsolutePath().toString(), document));
     }
-    
+
     public static PDImageXObject getImage(BufferedImage bi, PDDocument document) {
         return TGS_UnSafe.call(() -> LosslessFactory.createFromImage(document, bi));
     }
-    
+
     public static void insertImage(PDDocument document, PDPage page, PDImageXObject pdImage, int offsetX, int offsetY, float scale) {
         TGS_UnSafe.run(() -> {
             try (var contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -355,7 +360,7 @@ public class TS_FilePdfBoxUtils {
             }
         });
     }
-    
+
     public static List<Path> castFromIMGtoPDF_A4PORT_AllFiles(Path directory, boolean skipIfExists, boolean deleteIMGAfterConversion) {
         var subFiles = TS_DirectoryUtils.subFiles(directory, null, false, false);
         List<Path> convertedFiles = TGS_ListUtils.of();
@@ -376,7 +381,7 @@ public class TS_FilePdfBoxUtils {
         });
         return convertedFiles;
     }
-    
+
     public static Path castFromIMGtoPDF_A4PORT(Path srcIMG, Path dstPDF) {
         return TGS_UnSafe.call(() -> {
             d.cr("castFromJPGtoPDF", "init", srcIMG, dstPDF);
@@ -398,12 +403,12 @@ public class TS_FilePdfBoxUtils {
             return TGS_UnSafe.thrwReturns(e);
         });
     }
-    
+
     public static boolean isSupportedIMG(Path imgFile) {
         var fn = TGS_CharSetCast.toLocaleLowerCase(imgFile.getFileName().toString());
         return fn.endsWith(".jpg") || fn.endsWith(".jpeg") || fn.endsWith(".tif") || fn.endsWith(".tiff") || fn.endsWith(".gif") || fn.endsWith(".bmp") || fn.endsWith(".png");
     }
-    
+
     public static Path createPageBlank(Path path) {
         return TGS_UnSafe.call(() -> {
             try (var document = new PDDocument();) {
@@ -417,7 +422,7 @@ public class TS_FilePdfBoxUtils {
             return TGS_UnSafe.thrwReturns(e);
         });
     }
-    
+
     public static Path createPageText(Path path, String text) {
         return TGS_UnSafe.call(() -> {
             try (var document = new PDDocument();) {
