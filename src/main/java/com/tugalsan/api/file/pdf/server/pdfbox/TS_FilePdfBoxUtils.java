@@ -310,35 +310,114 @@ public class TS_FilePdfBoxUtils {
         }
     }
 
+    @Deprecated //NOT WORKING ERROR: org.apache.pdfbox version incompatible
     public static Path castFromPDFtoHTM(Path srcPDF, Path dstHTM, CharSequence optionalTitle, CharSequence optionalHeaderContent, CharSequence optional_iframe_video, boolean addLoader) {
-        if (true) {
-            return TS_FileTxtUtils.toFile("""
-            <html><head><title>ERROR</title></head><body>
-            PDF'den HTM ön izlene dosyası oluşturuken bir hata oluştu. Lütfen orjinal pdf dosyayı indiriniz.<br>
-            An error occured creating HTM preview file from PDF. Please download the original pdf file.<br>
-            <br>
-            %s
-            </body></html>
-            """.formatted("ERROR: org.apache.pdfbox version incompatible; disabled until further notice!"), dstHTM, false);
-        }
         d.ci("castFromPDFtoHTM", srcPDF, dstHTM);
+//        TGS_UnSafe.run(() -> {
         castFromPDFtoHTM_do(srcPDF, dstHTM);
+//        }, e -> {
+//            TS_FileTxtUtils.toFile("""
+//            <html><head><title>ERROR</title></head><body>
+//            PDF'den HTM ön izlene dosyası oluşturuken bir hata oluştu. Lütfen orjinal pdf dosyayı indiriniz.<br>
+//            An error occured creating HTM preview file from PDF. Please download the original pdf file.<br>
+//            <br>
+//            %s
+//            </body></html>
+//            """.formatted("ERROR: org.apache.pdfbox version incompatible; disabled until further notice!"), dstHTM, false);
+//            e.printStackTrace();
+//        });
+
         var strHtm = TS_FileTxtUtils.toString(dstHTM);
         if (addLoader) {
             strHtm = TS_FileHtmlUtils.addLoader(strHtm);
         }
-        if (optional_iframe_video != null) {
+        if (optional_iframe_video
+                != null) {
             strHtm = TS_FileHtmlUtils.appendResponsiveVideo(strHtm, optional_iframe_video);
         }
-        if (optionalHeaderContent != null) {
+        if (optionalHeaderContent
+                != null) {
             strHtm = TS_FileHtmlUtils.appendToBodyStartAfter(strHtm, optionalHeaderContent);
         }
-        if (optionalTitle != null) {
+        if (optionalTitle
+                != null) {
             strHtm = TS_FileHtmlUtils.updateTitleContent(strHtm, optionalTitle);
         }
-        return TS_FileTxtUtils.toFile(strHtm, dstHTM, false);
+
+        return TS_FileTxtUtils.toFile(strHtm, dstHTM,
+                false);
     }
 
+    /*
+    18-Jan-2024 09:59:37.251 SEVERE [https-jsse-nio-8443-exec-86] org.apache.catalina.core.StandardWrapperValve.invoke Servlet.service() for servlet [com.tugalsan.api.servlet.url.server.TS_SURLWebServlet] in context with path [/spi-file] threw exception
+	java.lang.RuntimeException: javax.servlet.ServletException: Servlet execution threw an exception
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.run(TGS_UnSafe.java:50)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.run(TGS_UnSafe.java:34)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.run(TGS_UnSafe.java:30)
+		at com.tugalsan.api.servlet.charset.deprecated.server.TS_SCharSetWebFilterUTF8.lambda$doFilter$3(TS_SCharSetWebFilterUTF8.java:61)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.run(TGS_UnSafe.java:52)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.run(TGS_UnSafe.java:34)
+		at com.tugalsan.api.servlet.charset.deprecated.server.TS_SCharSetWebFilterUTF8.doFilter(TS_SCharSetWebFilterUTF8.java:34)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+		at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:199)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+		at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:239)
+		at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:215)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+		at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197)
+		at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+		at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:543)
+		at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135)
+		at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+		at org.apache.catalina.valves.AbstractAccessLogValve.invoke(AbstractAccessLogValve.java:698)
+		at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+		at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:367)
+		at org.apache.coyote.http2.StreamProcessor.service(StreamProcessor.java:389)
+		at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+		at org.apache.coyote.http2.StreamProcessor.process(StreamProcessor.java:84)
+		at org.apache.coyote.http2.StreamRunnable.run(StreamRunnable.java:35)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+		at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+		at java.base/java.lang.Thread.run(Thread.java:1583)
+	Caused by: javax.servlet.ServletException: Servlet execution threw an exception
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:238)
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+		at com.tugalsan.api.servlet.charset.deprecated.server.TS_SCharSetWebFilterUTF8.lambda$doFilter$2(TS_SCharSetWebFilterUTF8.java:61)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.run(TGS_UnSafe.java:46)
+		... 31 more
+	Caused by: java.lang.NoSuchMethodError: org.apache.pdfbox.contentstream.operator.color.SetStrokingColorSpace: method 'void <init>()' not found
+		at org.fit.pdfdom.PDFBoxTree.<init>(PDFBoxTree.java:161)
+		at org.fit.pdfdom.PDFDomTree.<init>(PDFDomTree.java:90)
+		at com.tugalsan.api.file.pdf.server.pdfbox.TS_FilePdfBoxUtils.lambda$castFromPDFtoHTM_do$18(TS_FilePdfBoxUtils.java:354)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.call(TGS_UnSafe.java:70)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.call(TGS_UnSafe.java:65)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.call(TGS_UnSafe.java:61)
+		at com.tugalsan.api.file.pdf.server.pdfbox.TS_FilePdfBoxUtils.castFromPDFtoHTM_do(TS_FilePdfBoxUtils.java:351)
+		at com.tugalsan.api.file.pdf.server.pdfbox.TS_FilePdfBoxUtils.lambda$castFromPDFtoHTM$16(TS_FilePdfBoxUtils.java:316)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.run(TGS_UnSafe.java:46)
+		at com.tugalsan.api.unsafe.client.TGS_UnSafe.run(TGS_UnSafe.java:34)
+		at com.tugalsan.api.file.pdf.server.pdfbox.TS_FilePdfBoxUtils.castFromPDFtoHTM(TS_FilePdfBoxUtils.java:315)
+		at com.tugalsan.spi.file.AppSUEFetchReport.lambda$showList_handlePairs$10(AppSUEFetchReport.java:315)
+		at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+		at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762)
+		at com.tugalsan.spi.file.AppSUEFetchReport.showList_handlePairs(AppSUEFetchReport.java:301)
+		at com.tugalsan.spi.file.AppSUEFetchReport.lambda$run$9(AppSUEFetchReport.java:270)
+		at com.tugalsan.api.servlet.url.server.handler.TS_SURLHandler01WCachePolicy.html(TS_SURLHandler01WCachePolicy.java:105)
+		at com.tugalsan.api.servlet.url.server.handler.TS_SURLHandler.html(TS_SURLHandler.java:51)
+		at com.tugalsan.spi.file.AppSUEFetchReport.run(AppSUEFetchReport.java:58)
+		at com.tugalsan.spi.file.AppSUEFetchReport.run(AppSUEFetchReport.java:38)
+		at com.tugalsan.api.servlet.url.server.TS_SURLWebServlet.call(TS_SURLWebServlet.java:45)
+		at com.tugalsan.api.servlet.url.server.TS_SURLWebServlet.doGet(TS_SURLWebServlet.java:22)
+		at javax.servlet.http.HttpServlet.service(HttpServlet.java:656)
+		at javax.servlet.http.HttpServlet.service(HttpServlet.java:765)
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+		... 34 more
+     */
+    @Deprecated //NOT WORKING ERROR: org.apache.pdfbox version incompatible
     private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
         return TGS_UnSafe.call(() -> {
             d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
