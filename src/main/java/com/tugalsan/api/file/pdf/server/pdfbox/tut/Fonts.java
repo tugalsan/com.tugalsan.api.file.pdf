@@ -3,7 +3,6 @@ package com.tugalsan.api.file.pdf.server.pdfbox.tut;
 import com.tugalsan.api.unsafe.client.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -17,8 +16,8 @@ public class Fonts {
 
     public static void HelloWorldType1(String message, String file, String pfbPath) {
         TGS_UnSafe.run(() -> {
-            try ( PDDocument doc = new PDDocument()) {
-                PDPage page = new PDPage();
+            try ( var doc = new PDDocument()) {
+                var page = new PDPage();
                 doc.addPage(page);
 
                 PDFont font;
@@ -26,7 +25,7 @@ public class Fonts {
                     font = new PDType1Font(doc, is);
                 }
 
-                try ( PDPageContentStream contents = new PDPageContentStream(doc, page)) {
+                try ( var contents = new PDPageContentStream(doc, page)) {
                     contents.beginText();
                     contents.setFont(font, 12);
                     contents.newLineAtOffset(100, 700);
@@ -42,13 +41,13 @@ public class Fonts {
 
     public static void HelloWorldTTF(String message, String pdfPath, String ttfPath) {
         TGS_UnSafe.run(() -> {
-            try ( PDDocument doc = new PDDocument()) {
-                PDPage page = new PDPage();
+            try ( var doc = new PDDocument()) {
+                var page = new PDPage();
                 doc.addPage(page);
 
-                PDFont font = PDType0Font.load(doc, new File(ttfPath));
+                var font = PDType0Font.load(doc, new File(ttfPath));
 
-                try ( PDPageContentStream contents = new PDPageContentStream(doc, page)) {
+                try ( var contents = new PDPageContentStream(doc, page)) {
                     contents.beginText();
                     contents.setFont(font, 12);
                     contents.newLineAtOffset(100, 700);
@@ -64,14 +63,14 @@ public class Fonts {
 
     public static void EmbeddedFonts(String file) {
         TGS_UnSafe.run(() -> {
-            try ( PDDocument document = new PDDocument()) {
-                PDPage page = new PDPage(PDRectangle.A4);
+            try ( var document = new PDDocument()) {
+                var page = new PDPage(PDRectangle.A4);
                 document.addPage(page);
 
-                String dir = "../pdfbox/src/main/resources/org/apache/pdfbox/resources/ttf/";
-                PDType0Font font = PDType0Font.load(document, new File(dir + "LiberationSans-Regular.ttf"));
+                var dir = "../pdfbox/src/main/resources/org/apache/pdfbox/resources/ttf/";
+                var font = PDType0Font.load(document, new File(dir + "LiberationSans-Regular.ttf"));
 
-                try ( PDPageContentStream stream = new PDPageContentStream(document, page)) {
+                try ( var stream = new PDPageContentStream(document, page)) {
                     stream.beginText();
                     stream.setFont(font, 12);
                     stream.setLeading(12 * 1.2f);

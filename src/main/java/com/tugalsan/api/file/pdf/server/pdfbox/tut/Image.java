@@ -17,17 +17,17 @@ public class Image {
                 System.exit(1);
             }
 
-            try ( PDDocument doc = new PDDocument()) {
-                PDPage page = new PDPage();
+            try ( var doc = new PDDocument()) {
+                var page = new PDPage();
                 doc.addPage(page);
 
                 // createFromFile is the easiest way with an image file
                 // if you already have the image in a BufferedImage, 
                 // call LosslessFactory.createFromImage() instead
-                PDImageXObject pdImage = PDImageXObject.createFromFile(imagePath, doc);
+                var pdImage = PDImageXObject.createFromFile(imagePath, doc);
 
                 // draw the image at full size at (x=20, y=20)
-                try ( PDPageContentStream contents = new PDPageContentStream(doc, page)) {
+                try ( var contents = new PDPageContentStream(doc, page)) {
                     // draw the image at full size at (x=20, y=20)
                     contents.drawImage(pdImage, 20, 20);
 
@@ -41,20 +41,20 @@ public class Image {
 
     public static void AddImageToPDF(String inputFile, String imagePath, String outputFile) {
         TGS_UnSafe.run(() -> {
-            try ( PDDocument doc = Loader.loadPDF(new RandomAccessReadBufferedFile(inputFile))) {
+            try ( var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(inputFile))) {
                 //we will add the image to the first page.
-                PDPage page = doc.getPage(0);
+                var page = doc.getPage(0);
 
                 // createFromFile is the easiest way with an image file
                 // if you already have the image in a BufferedImage, 
                 // call LosslessFactory.createFromImage() instead
-                PDImageXObject pdImage = PDImageXObject.createFromFile(imagePath, doc);
+                var pdImage = PDImageXObject.createFromFile(imagePath, doc);
 
-                try ( PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+                try ( var contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                     // contentStream.drawImage(ximage, 20, 20 );
                     // better method inspired by http://stackoverflow.com/a/22318681/535646
                     // reduce this value if the image is too large
-                    float scale = 1f;
+                    var scale = 1f;
                     contentStream.drawImage(pdImage, 20, 20, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
                 }
                 doc.save(outputFile);

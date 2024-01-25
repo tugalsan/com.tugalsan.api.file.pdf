@@ -15,11 +15,9 @@ import org.apache.pdfbox.contentstream.PDFStreamEngine;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImage;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
 import org.apache.pdfbox.util.Matrix;
 import org.apache.pdfbox.util.Vector;
 
@@ -46,12 +44,12 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
 
     public static void main(String[] args) {
         TGS_UnSafe.run(() -> {
-            File file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
+            var file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
                     "custom-render-demo.pdf");
 
-            try ( PDDocument doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
-                PDPage page = doc.getPage(0);
-                CustomGraphicsStreamEngine engine = new CustomGraphicsStreamEngine(page);
+            try ( var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
+                var page = doc.getPage(0);
+                var engine = new CustomGraphicsStreamEngine(page);
                 engine.run();
             }
         });
@@ -65,7 +63,7 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
     public void run() {
         TGS_UnSafe.run(() -> {
             processPage(getPage());
-            for (PDAnnotation annotation : getPage().getAnnotations()) {
+            for (var annotation : getPage().getAnnotations()) {
                 showAnnotation(annotation);
             }
         });

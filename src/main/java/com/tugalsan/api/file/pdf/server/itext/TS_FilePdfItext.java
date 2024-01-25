@@ -4,7 +4,6 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.tugalsan.api.charset.client.*;
 import java.awt.Color;
 import java.nio.file.Files;
@@ -191,12 +190,11 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public Paragraph createParagraph() {
-        Paragraph p = new Paragraph();
-        return p;
+        return new Paragraph();
     }
 
     public Paragraph createParagraph(Font font) {
-        Paragraph p = new Paragraph();
+        var p = new Paragraph();
         p.setFont(font);
         return p;
     }
@@ -205,9 +203,9 @@ public class TS_FilePdfItext implements AutoCloseable {
         return new Chunk(text.toString());
     }
 
-    private Chunk createChunkLineSeperator(LineSeparator ls) {
-        return new Chunk(ls);
-    }
+//    private Chunk createChunkLineSeperator(LineSeparator ls) {
+//        return new Chunk(ls);
+//    }
 
     private Chunk createChunkText(CharSequence text, Font font) {
         var c = new Chunk(text.toString());
@@ -235,9 +233,10 @@ public class TS_FilePdfItext implements AutoCloseable {
         TGS_UnSafe.run(() -> {
             if (image == null) {
                 TGS_UnSafe.thrw(d.className, "addImageToPageLeft", "image == null");
+                return;
             }
             if (textWrap) {
-                image.setAlignment(Image.ALIGN_LEFT | Image.TEXTWRAP);
+                image.setAlignment(/*Image.ALIGN_LEFT | */Image.TEXTWRAP);//allign left is 0 already
             } else {
                 image.setAlignment(Image.ALIGN_LEFT);
             }
@@ -253,6 +252,7 @@ public class TS_FilePdfItext implements AutoCloseable {
         TGS_UnSafe.run(() -> {
             if (image == null) {
                 TGS_UnSafe.thrw(d.className, "addImageToPageRight", "image == null");
+                return;
             }
             if (textWrap) {
                 image.setAlignment(Image.ALIGN_RIGHT | Image.TEXTWRAP);
@@ -271,6 +271,7 @@ public class TS_FilePdfItext implements AutoCloseable {
         TGS_UnSafe.run(() -> {
             if (image == null) {
                 TGS_UnSafe.thrw(d.className, "addImageToPageCenter", "image == null");
+                return;
             }
             if (textWrap) {
                 image.setAlignment(Image.ALIGN_CENTER | Image.TEXTWRAP);
@@ -288,7 +289,7 @@ public class TS_FilePdfItext implements AutoCloseable {
         }
         var i = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
         if (textWrap) {
-            i.setAlignment(Image.ALIGN_LEFT | Image.TEXTWRAP);
+            i.setAlignment(/*Image.ALIGN_LEFT | */Image.TEXTWRAP);//allign left is 0 already
         } else {
             i.setAlignment(Image.ALIGN_LEFT);
         }
@@ -358,7 +359,7 @@ public class TS_FilePdfItext implements AutoCloseable {
 
     public static Font getFontFrom(int fontSize, boolean bold, boolean italic, BaseColor fontColor,
             Path fontPathBold, Path fontPathBoldItalic, Path fontPathItalic, Path fontPathRegular, float fontSizeCorrectionForFontFile) {
-        int fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
+        var fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
         if (bold && italic) {
             if (!TS_FileUtils.isExistFile(fontPathBoldItalic)) {
                 d.ce("getFontFrom", "UTF8 font bold & italic not find!", fontPathBoldItalic);
@@ -422,7 +423,7 @@ public class TS_FilePdfItext implements AutoCloseable {
     }
 
     public static Font getFontInternal(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
-        int fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
+        var fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
         return FontFactory.getFont(BaseFont.TIMES_ROMAN, TGS_CharSet.IBM_TURKISH(), true, fontSize, fontStyle, fontColor);
         //return FontFactory.getFont("arialuni", "Cp857", true, fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
         //return FontFactory.getFont("arialuni", "Identity-H", fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);

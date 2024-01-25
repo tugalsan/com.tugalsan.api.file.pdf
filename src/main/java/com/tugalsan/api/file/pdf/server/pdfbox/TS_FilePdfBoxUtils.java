@@ -1,7 +1,6 @@
 package com.tugalsan.api.file.pdf.server.pdfbox;
 
 import com.tugalsan.api.charset.client.TGS_CharSetCast;
-import com.tugalsan.api.charset.client.TGS_CharSetUTF8;
 import com.tugalsan.api.file.html.server.TS_FileHtmlUtils;
 import com.tugalsan.api.file.img.server.TS_FileImageUtils;
 import com.tugalsan.api.file.server.TS_DirectoryUtils;
@@ -16,7 +15,6 @@ import com.tugalsan.api.shape.client.TGS_ShapeDimension;
 import com.tugalsan.api.stream.client.TGS_StreamUtils;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import javax.imageio.IIOImage;
@@ -24,20 +22,17 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
-import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.util.Matrix;
-import org.fit.pdfdom.PDFDomTree;
 
 public class TS_FilePdfBoxUtils {
 
@@ -241,26 +236,24 @@ public class TS_FilePdfBoxUtils {
     @Deprecated //TODO: I just wrote it. Not Tested!
     public static void compress(Path pdfSrcFile, Path pdfDstFile, float compQual_fr0_to1, boolean lossless) {
         TGS_UnSafe.run(() -> {
-            float compQual = Math.max(0, Math.min(compQual_fr0_to1, 1));
+            var compQual = Math.max(0, Math.min(compQual_fr0_to1, 1));
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 var pages = doc.getPages();
                 final ImageWriter imgWriter;
                 final ImageWriteParam iwp;
                 if (lossless) {
-                    final Iterator<ImageWriter> tiffWriters
-                            = ImageIO.getImageWritersBySuffix("png");
+                    var tiffWriters = ImageIO.getImageWritersBySuffix("png");
                     imgWriter = tiffWriters.next();
                     iwp = imgWriter.getDefaultWriteParam();
                     //iwp.setCompressionMode(ImageWriteParam.MODE_DISABLED);
                 } else {
-                    final Iterator<ImageWriter> jpgWriters
-                            = ImageIO.getImageWritersByFormatName("jpeg");
+                    var jpgWriters                            = ImageIO.getImageWritersByFormatName("jpeg");
                     imgWriter = jpgWriters.next();
                     iwp = imgWriter.getDefaultWriteParam();
                     iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                     iwp.setCompressionQuality(compQual);
                 }
-                for (PDPage p : pages) {
+                for (var p : pages) {
                     compress_scanResources(p.getResources(), doc, imgWriter, iwp, lossless);
                 }
                 doc.save(pdfDstFile.toFile());
@@ -275,19 +268,19 @@ public class TS_FilePdfBoxUtils {
             final ImageWriter imgWriter,
             final ImageWriteParam iwp, boolean lossless)
             throws FileNotFoundException, IOException {
-        Iterable<COSName> xNames = rList.getXObjectNames();
-        for (COSName xName : xNames) {
-            final PDXObject xObj = rList.getXObject(xName);
+       var xNames = rList.getXObjectNames();
+        for (var xName : xNames) {
+            final var xObj = rList.getXObject(xName);
             if (!(xObj instanceof PDImageXObject)) {
                 continue;
             }
             var o = (PDFormXObject) xObj;
             compress_scanResources(o.getResources(), doc, imgWriter, iwp, lossless);
-            final PDImageXObject img = (PDImageXObject) xObj;
+            var img = (PDImageXObject) xObj;
             System.out.println("Compressing image: " + xName.getName());
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            var baos = new ByteArrayOutputStream();
             imgWriter.setOutput(ImageIO.createImageOutputStream(baos));
-            BufferedImage bi = img.getImage();
+            var bi = img.getImage();
             IIOImage iioi;
             iioi = switch (bi.getTransparency()) {
                 case BufferedImage.OPAQUE ->
@@ -298,8 +291,7 @@ public class TS_FilePdfBoxUtils {
                     new IIOImage(img.getOpaqueImage(), null, null);
             };
             imgWriter.write(null, iioi, iwp);
-            final ByteArrayInputStream bais
-                    = new ByteArrayInputStream(baos.toByteArray());
+            var bais                    = new ByteArrayInputStream(baos.toByteArray());
             final PDImageXObject imgNew;
             if (lossless) {
                 imgNew = LosslessFactory.createFromImage(doc, img.getImage());
@@ -419,18 +411,17 @@ public class TS_FilePdfBoxUtils {
 		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
 		... 34 more
      */
-    @Deprecated //NOT WORKING ERROR: org.apache.pdfbox version incompatible
-    private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
-        return TGS_UnSafe.call(() -> {
-            d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
-            try (var pdf = Loader.loadPDF(new RandomAccessReadBufferedFile(srcPDF.toFile())); var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
-                new PDFDomTree().writeText(pdf, output);
-                d.cr("castFromPDFtoHTM", "success");
-            }
-            return dstHTM;
-        });
-    }
-
+//    @Deprecated //NOT WORKING ERROR: org.apache.pdfbox version incompatible
+//    private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
+//        return TGS_UnSafe.call(() -> {
+//            d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
+//            try (var pdf = Loader.loadPDF(new RandomAccessReadBufferedFile(srcPDF.toFile())); var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
+//                new PDFDomTree().writeText(pdf, output);
+//                d.cr("castFromPDFtoHTM", "success");
+//            }
+//            return dstHTM;
+//        });
+//    }
     public static PDImageXObject getImage(Path imgFile, PDDocument document) {
         return TGS_UnSafe.call(() -> PDImageXObject.createFromFile(imgFile.toAbsolutePath().toString(), document));
     }

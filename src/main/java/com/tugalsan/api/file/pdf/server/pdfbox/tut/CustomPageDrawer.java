@@ -95,14 +95,14 @@ public class CustomPageDrawer {
 
                 // bbox in EM -> user units
                 Shape bbox = new Rectangle2D.Float(0, 0, font.getWidth(code) / 1000, 1);
-                AffineTransform at = textRenderingMatrix.createAffineTransform();
+                var at = textRenderingMatrix.createAffineTransform();
                 bbox = at.createTransformedShape(bbox);
 
                 // save
-                Graphics2D graphics = getGraphics();
-                Color color = graphics.getColor();
-                Stroke stroke = graphics.getStroke();
-                Shape clip = graphics.getClip();
+                var graphics = getGraphics();
+                var color = graphics.getColor();
+                var stroke = graphics.getStroke();
+                var clip = graphics.getClip();
 
                 // draw
                 graphics.setClip(graphics.getDeviceConfiguration().getBounds());
@@ -130,10 +130,10 @@ public class CustomPageDrawer {
                 super.fillPath(windingRule);
 
                 // save
-                Graphics2D graphics = getGraphics();
-                Color color = graphics.getColor();
-                Stroke stroke = graphics.getStroke();
-                Shape clip = graphics.getClip();
+                var graphics = getGraphics();
+                var color = graphics.getColor();
+                var stroke = graphics.getStroke();
+                var clip = graphics.getClip();
 
                 // draw
                 graphics.setClip(graphics.getDeviceConfiguration().getBounds());

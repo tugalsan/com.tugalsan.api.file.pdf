@@ -2,15 +2,12 @@ package com.tugalsan.api.file.pdf.server.pdfbox.tut;
 
 import com.tugalsan.api.unsafe.client.*;
 import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.util.Matrix;
@@ -20,19 +17,19 @@ public class Page {
     public static void AddMessageToEachPage(String infile, String message, String outfile) {
         TGS_UnSafe.run(() -> {
             try ( var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(infile))) {
-                PDFont font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
-                float fontSize = 36.0f;
+                var font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+                var fontSize = 36.0f;
 
-                for (PDPage page : doc.getPages()) {
-                    PDRectangle pageSize = page.getMediaBox();
-                    float stringWidth = font.getStringWidth(message) * fontSize / 1000f;
+                for (var page : doc.getPages()) {
+                    var pageSize = page.getMediaBox();
+                    var stringWidth = font.getStringWidth(message) * fontSize / 1000f;
                     // calculate to center of the page
-                    int rotation = page.getRotation();
-                    boolean rotate = rotation == 90 || rotation == 270;
-                    float pageWidth = rotate ? pageSize.getHeight() : pageSize.getWidth();
-                    float pageHeight = rotate ? pageSize.getWidth() : pageSize.getHeight();
-                    float centerX = rotate ? pageHeight / 2f : (pageWidth - stringWidth) / 2f;
-                    float centerY = rotate ? (pageWidth - stringWidth) / 2f : pageHeight / 2f;
+                    var rotation = page.getRotation();
+                    var rotate = rotation == 90 || rotation == 270;
+                    var pageWidth = rotate ? pageSize.getHeight() : pageSize.getWidth();
+                    var pageHeight = rotate ? pageSize.getWidth() : pageSize.getHeight();
+                    var centerX = rotate ? pageHeight / 2f : (pageWidth - stringWidth) / 2f;
+                    var centerY = rotate ? (pageWidth - stringWidth) / 2f : pageHeight / 2f;
 
                     // append the content to the existing stream
                     try ( var contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -61,7 +58,7 @@ public class Page {
         TGS_UnSafe.run(() -> {
             try ( var doc = new PDDocument()) {
                 // a valid PDF document requires at least one page
-                PDPage blankPage = new PDPage();
+                var blankPage = new PDPage();
                 doc.addPage(blankPage);
                 doc.save(inputFile);
             }
@@ -76,9 +73,9 @@ public class Page {
                 page.setRotation(90);
                 doc.addPage(page);
                 var pageSize = page.getMediaBox();
-                float pageWidth = pageSize.getWidth();
+                var pageWidth = pageSize.getWidth();
                 float fontSize = 12;
-                float stringWidth = font.getStringWidth(message) * fontSize / 1000f;
+                var stringWidth = font.getStringWidth(message) * fontSize / 1000f;
                 float startX = 100;
                 float startY = 100;
 

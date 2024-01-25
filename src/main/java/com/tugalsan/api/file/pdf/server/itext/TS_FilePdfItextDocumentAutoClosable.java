@@ -2,7 +2,6 @@ package com.tugalsan.api.file.pdf.server.itext;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Rectangle;
-import com.tugalsan.api.runnable.client.TGS_RunnableType1;
 
 public class TS_FilePdfItextDocumentAutoClosable extends Document implements AutoCloseable {
 

@@ -4,10 +4,7 @@ import com.tugalsan.api.unsafe.client.*;
 import java.awt.print.Book;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
-import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.File;
-import java.io.IOException;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.PageRanges;
@@ -39,8 +36,8 @@ public final class Print {
                 System.exit(1);
             }
 
-            String filename = args[0];
-            try ( PDDocument document = Loader.loadPDF(new RandomAccessReadBufferedFile(filename))) {
+            var filename = args[0];
+            try ( var document = Loader.loadPDF(new RandomAccessReadBufferedFile(filename))) {
                 // choose your printing method:
                 print(document);
                 //printWithAttributes(document);
@@ -57,7 +54,7 @@ public final class Print {
      */
     private static void print(PDDocument document) {
         TGS_UnSafe.run(() -> {
-            PrinterJob job = PrinterJob.getPrinterJob();
+            var job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
             job.print();
         });
@@ -68,7 +65,7 @@ public final class Print {
      */
     private static void printWithAttributes(PDDocument document) {
         TGS_UnSafe.run(() -> {
-            PrinterJob job = PrinterJob.getPrinterJob();
+            var job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
 
             PrintRequestAttributeSet attr = new HashPrintRequestAttributeSet();
@@ -83,7 +80,7 @@ public final class Print {
      */
     private static void printWithDialog(PDDocument document) {
         TGS_UnSafe.run(() -> {
-            PrinterJob job = PrinterJob.getPrinterJob();
+            var job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
 
             if (job.printDialog()) {
@@ -98,15 +95,15 @@ public final class Print {
      */
     private static void printWithDialogAndAttributes(PDDocument document) {
         TGS_UnSafe.run(() -> {
-            PrinterJob job = PrinterJob.getPrinterJob();
+            var job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
 
             PrintRequestAttributeSet attr = new HashPrintRequestAttributeSet();
             attr.add(new PageRanges(1, 1)); // pages 1 to 1
 
-            PDViewerPreferences vp = document.getDocumentCatalog().getViewerPreferences();
+            var vp = document.getDocumentCatalog().getViewerPreferences();
             if (vp != null && vp.getDuplex() != null) {
-                String dp = vp.getDuplex();
+                var dp = vp.getDuplex();
                 if (PDViewerPreferences.DUPLEX.DuplexFlipLongEdge.toString().equals(dp)) {
                     attr.add(Sides.TWO_SIDED_LONG_EDGE);
                 } else if (PDViewerPreferences.DUPLEX.DuplexFlipShortEdge.toString().equals(dp)) {
@@ -127,20 +124,20 @@ public final class Print {
      */
     private static void printWithPaper(PDDocument document) {
         TGS_UnSafe.run(() -> {
-            PrinterJob job = PrinterJob.getPrinterJob();
+            var job = PrinterJob.getPrinterJob();
             job.setPageable(new PDFPageable(document));
 
             // define custom paper
-            Paper paper = new Paper();
+            var paper = new Paper();
             paper.setSize(306, 396); // 1/72 inch
             paper.setImageableArea(0, 0, paper.getWidth(), paper.getHeight()); // no margins
 
             // custom page format
-            PageFormat pageFormat = new PageFormat();
+            var pageFormat = new PageFormat();
             pageFormat.setPaper(paper);
 
             // override the page format
-            Book book = new Book();
+            var book = new Book();
             // append all pages
             book.append(new PDFPrintable(document), pageFormat, document.getNumberOfPages());
             job.setPageable(book);
