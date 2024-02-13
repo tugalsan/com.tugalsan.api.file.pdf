@@ -9,6 +9,8 @@ module com.tugalsan.api.file.pdf {
     requires com.tugalsan.api.runnable;
     requires com.tugalsan.api.stream;
     requires com.tugalsan.api.coronator;
+    requires com.tugalsan.api.string;
+    requires com.tugalsan.api.url;
     requires com.tugalsan.api.validator;
     requires com.tugalsan.api.callable;
     requires com.tugalsan.api.list;
@@ -17,8 +19,10 @@ module com.tugalsan.api.file.pdf {
     requires com.tugalsan.api.shape;
     requires com.tugalsan.api.file;
     requires com.tugalsan.api.file.txt;
+    requires com.tugalsan.api.file.common;
     requires com.tugalsan.api.file.html;
     requires com.tugalsan.api.file.img;
+    exports com.tugalsan.api.file.pdf.server;
     exports com.tugalsan.api.file.pdf.server.itext;
     exports com.tugalsan.api.file.pdf.server.pdfbox;
 }
