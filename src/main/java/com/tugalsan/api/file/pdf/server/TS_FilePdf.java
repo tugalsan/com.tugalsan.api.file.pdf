@@ -10,7 +10,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.tugalsan.api.string.server.TS_StringUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.file.pdf.server.itext.TS_FilePdfItextUtils;
-import com.tugalsan.api.file.common.server.TS_FileTmcrCodeFontTags;
+import com.tugalsan.api.file.common.server.TS_FileCommonFontTags;
 import com.tugalsan.api.file.common.server.TS_FileCommonBall;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -400,29 +400,29 @@ public class TS_FilePdf extends TS_FileCommonInterface {
             return true;
         }
         d.ci("setFontColor");
-        if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_BLACK())) {
+        if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_BLACK())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_BLACK();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_BLUE())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_BLUE())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_BLUE();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_CYAN())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_CYAN())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_CYAN();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_DARK_GRAY())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_DARK_GRAY())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_DARK_GRAY();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_GRAY())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_GRAY())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_GRAY();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_GREEN())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_GREEN())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_GREEN();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_LIGHT_GRAY())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_LIGHT_GRAY())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_LIGHT_GRAY();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_MAGENTA())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_MAGENTA())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_MAGENTA();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_ORANGE())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_ORANGE())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_ORANGE();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_PINK())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_PINK())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_PINK();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_RED())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_RED())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_RED();
-        } else if (Objects.equals(macroGlobals.fontColor, TS_FileTmcrCodeFontTags.CODE_TOKEN_FONT_COLOR_YELLOW())) {
+        } else if (Objects.equals(macroGlobals.fontColor, TS_FileCommonFontTags.CODE_TOKEN_FONT_COLOR_YELLOW())) {
             pdfFontColor = TS_FilePdfItextUtils.getFONT_COLOR_YELLOW();
         } else {
             d.ce("setFontColor", "ERROR: CODE_SET_FONT_COLOR code token[1] error!");
