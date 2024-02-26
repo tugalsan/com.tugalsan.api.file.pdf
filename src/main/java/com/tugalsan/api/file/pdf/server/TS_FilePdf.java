@@ -324,35 +324,40 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         var lines = TS_StringUtils.toList(text, "\n");
         IntStream.range(0, lines.size()).forEachOrdered(i -> {
             var line = lines.get(i);
-            d.ci("addText", "line", line);
-            if (!line.isEmpty()) {
-                if (!TGS_StringDouble.may(text)) {
-                    d.ci("addText", "line", "addTextToParagraph", "mayNot", line);
-                    pdf.addTextToParagraph(line, pdfParag, pdfFont);
-                } else {
-                    var tags = TS_StringUtils.toList_spc(line);
-                    IntStream.range(0, tags.size()).forEachOrdered(j -> {
-                        var tag = tags.get(j);
-                        var dbl = TGS_StringDouble.of(text);
-                        if (dbl.isEmpty()) {
-                            pdf.addTextToParagraph(tag, pdfParag, pdfFont);
-                            d.ci("addText", "line", "addTextToParagraph", "mayEmpty", line);
-                        } else {
-                            d.ci("addText", "line", "addTextToParagraph", "mayDbl", line);
-                            pdf.addTextToParagraph(String.valueOf(dbl.get().left), pdfParag, pdfFont);
-                            pdf.addTextToParagraph(String.valueOf(dbl.get().dim()) + String.valueOf(dbl.get().right), pdfParag, pdfFont_half);
-                        }
-                        if (tags.size() - 1 != j) {
-                            pdf.addTextToParagraph(" ", pdfParag, pdfFont);
-                        }
-                    });
-                }
-            }
+            addText_line(line);
             if (i != lines.size() - 1 || text.endsWith("\n")) {
                 addLineBreak();
             }
         });
         return true;
+    }
+
+    public void addText_line(String line) {
+        d.ci("addText", "line", line);
+        if (line.isEmpty()) {
+            return;
+        }
+        if (!TGS_StringDouble.may(line)) {
+            d.ci("addText", "line", "addTextToParagraph", "mayNot", line);
+            pdf.addTextToParagraph(line, pdfParag, pdfFont);
+            return;
+        }
+        var tags = TS_StringUtils.toList_spc(line);
+        IntStream.range(0, tags.size()).forEachOrdered(j -> {
+            var tag = tags.get(j);
+            var dbl = TGS_StringDouble.of(line);
+            if (dbl.isEmpty()) {
+                pdf.addTextToParagraph(tag, pdfParag, pdfFont);
+                d.ci("addText", "line", "addTextToParagraph", "mayEmpty", line);
+            } else {
+                d.ci("addText", "line", "addTextToParagraph", "mayDbl", line);
+                pdf.addTextToParagraph(String.valueOf(dbl.get().left), pdfParag, pdfFont);
+                pdf.addTextToParagraph(String.valueOf(dbl.get().dim()) + String.valueOf(dbl.get().right), pdfParag, pdfFont_half);
+            }
+            if (tags.size() - 1 != j) {
+                pdf.addTextToParagraph(" ", pdfParag, pdfFont);
+            }
+        });
     }
 
     @Override
@@ -379,9 +384,9 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         var k_half = 0.8f;
         var k_file = 1f;
         pdfFont = TS_FilePdfItextUtils.getFontFrom(fileCommonConfig.fontHeight, fileCommonConfig.fontBold, fileCommonConfig.fontItalic, pdfFontColor,
-                fileCommonConfig.fontPathBold, fileCommonConfig.fontPathBoldItalic, fileCommonConfig.fontPathItalic, fileCommonConfig.fontPathRegular, k_file);
+                fileCommonConfig.fontPathBold(), fileCommonConfig.fontPathBoldItalic(), fileCommonConfig.fontPathItalic(), fileCommonConfig.fontPathRegular(), k_file);
         pdfFont_half = TS_FilePdfItextUtils.getFontFrom((int) (fileCommonConfig.fontHeight * k_half), fileCommonConfig.fontBold, fileCommonConfig.fontItalic, pdfFontColor,
-                fileCommonConfig.fontPathBold, fileCommonConfig.fontPathBoldItalic, fileCommonConfig.fontPathItalic, fileCommonConfig.fontPathRegular, k_file);
+                fileCommonConfig.fontPathBold(), fileCommonConfig.fontPathBoldItalic(), fileCommonConfig.fontPathItalic(), fileCommonConfig.fontPathRegular(), k_file);
         return true;
     }
 
