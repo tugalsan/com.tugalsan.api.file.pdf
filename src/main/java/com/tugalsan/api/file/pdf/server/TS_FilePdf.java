@@ -383,10 +383,19 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         d.ci("setFontStyle");
         var k_half = 0.8f;
         var k_file = 1f;
-        pdfFont = TS_FilePdfItextUtils.getFontFrom(fileCommonConfig.fontHeight, fileCommonConfig.fontBold, fileCommonConfig.fontItalic, pdfFontColor,
-                fileCommonConfig.fontPathBold(), fileCommonConfig.fontPathBoldItalic(), fileCommonConfig.fontPathItalic(), fileCommonConfig.fontPathRegular(), k_file);
-        pdfFont_half = TS_FilePdfItextUtils.getFontFrom((int) (fileCommonConfig.fontHeight * k_half), fileCommonConfig.fontBold, fileCommonConfig.fontItalic, pdfFontColor,
-                fileCommonConfig.fontPathBold(), fileCommonConfig.fontPathBoldItalic(), fileCommonConfig.fontPathItalic(), fileCommonConfig.fontPathRegular(), k_file);
+        var fontFamilyPath = fileCommonConfig.fontFamilyPaths.get(fileCommonConfig.fontFamilyIdx);
+        pdfFont = TS_FilePdfItextUtils.getFontFrom(
+                fileCommonConfig.fontHeight,
+                fileCommonConfig.fontBold, fileCommonConfig.fontItalic,
+                pdfFontColor,
+                fontFamilyPath,
+                k_file);
+        pdfFont_half = TS_FilePdfItextUtils.getFontFrom(
+                (int) (fileCommonConfig.fontHeight * k_half),
+                fileCommonConfig.fontBold, fileCommonConfig.fontItalic,
+                pdfFontColor,
+                fontFamilyPath,
+                 k_file);
         return true;
     }
 

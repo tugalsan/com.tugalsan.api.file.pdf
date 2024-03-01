@@ -9,6 +9,7 @@ module com.tugalsan.api.file.pdf {
     requires com.tugalsan.api.runnable;
     requires com.tugalsan.api.stream;
     requires com.tugalsan.api.coronator;
+    requires com.tugalsan.api.font;
     requires com.tugalsan.api.string;
     requires com.tugalsan.api.url;
     requires com.tugalsan.api.validator;

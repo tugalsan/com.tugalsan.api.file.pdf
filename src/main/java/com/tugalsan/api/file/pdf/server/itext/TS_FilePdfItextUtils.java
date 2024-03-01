@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.stream.IntStream;
 import com.tugalsan.api.coronator.client.*;
 import com.tugalsan.api.file.server.*;
+import com.tugalsan.api.font.client.TGS_FontFamily;
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.unsafe.client.*;
 
@@ -206,7 +207,6 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 //    private Chunk createChunkLineSeperator(LineSeparator ls) {
 //        return new Chunk(ls);
 //    }
-
     private Chunk createChunkText(CharSequence text, Font font) {
         var c = new Chunk(text.toString());
         c.setFont(font);
@@ -355,6 +355,13 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
     public void addCellToTable(PdfPTable table, PdfPCell cell, int rotation_0_90_180_270) {
         cell.setRotation(rotation_0_90_180_270);
         table.addCell(cell);
+    }
+
+    public static Font getFontFrom(int fontSize, boolean bold, boolean italic, BaseColor fontColor,
+            TGS_FontFamily<Path> fontFamilyPath, float fontSizeCorrectionForFontFile) {
+        return getFontFrom(fontSize, bold, italic, fontColor,
+                fontFamilyPath.bold(), fontFamilyPath.boldItalic(), fontFamilyPath.italic(), fontFamilyPath.regular(),
+                fontSizeCorrectionForFontFile);
     }
 
     public static Font getFontFrom(int fontSize, boolean bold, boolean italic, BaseColor fontColor,
