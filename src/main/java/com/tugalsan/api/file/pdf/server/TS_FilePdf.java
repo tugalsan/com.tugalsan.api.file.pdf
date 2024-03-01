@@ -7,11 +7,13 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.tugalsan.api.coronator.client.TGS_Coronator;
 import com.tugalsan.api.string.server.TS_StringUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.file.pdf.server.itext.TS_FilePdfItextUtils;
 import com.tugalsan.api.file.common.server.TS_FileCommonFontTags;
 import com.tugalsan.api.file.common.server.TS_FileCommonConfig;
+import com.tugalsan.api.font.client.TGS_FontFamily;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
@@ -19,6 +21,7 @@ import java.util.stream.IntStream;
 import com.tugalsan.api.string.client.TGS_StringUtils;
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.runnable.client.TGS_RunnableType1;
+import com.tugalsan.api.stream.client.TGS_StreamUtils;
 import com.tugalsan.api.string.client.TGS_StringDouble;
 import com.tugalsan.api.unsafe.client.*;
 import com.tugalsan.api.url.client.*;
@@ -34,6 +37,8 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
     public Paragraph pdfParag = null;
     public Font pdfFont;
     public Font pdfFont_half;
+    public List<TGS_FontFamily<Font>> fontFamilyFonts_pdf;
+    public List<TGS_FontFamily<Font>> fontFamilyFonts_pdfHalf;
     public BaseColor pdfFontColor = BaseColor.BLACK;
 
     private TS_FileCommonConfig fileCommonConfig;
@@ -60,6 +65,24 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         if (isClosed()) {
             return;
         }
+        fontFamilyFonts_pdf = TGS_StreamUtils.toLst(
+                IntStream.range(0, fileCommonConfig.fontFamilyPaths.size())
+                        .mapToObj(fontIdx -> new TGS_FontFamily<Font>(
+                        getFontFrom(1, fontIdx, false, false),
+                        getFontFrom(1, fontIdx, true, false),
+                        getFontFrom(1, fontIdx, false, true),
+                        getFontFrom(1, fontIdx, true, true)
+                ))
+        );
+        fontFamilyFonts_pdfHalf = TGS_StreamUtils.toLst(
+                IntStream.range(0, fileCommonConfig.fontFamilyPaths.size())
+                        .mapToObj(fontIdx -> new TGS_FontFamily<Font>(
+                        getFontFrom(0.8f, fontIdx, false, false),
+                        getFontFrom(0.8f, fontIdx, true, false),
+                        getFontFrom(0.8f, fontIdx, false, true),
+                        getFontFrom(0.8f, fontIdx, true, true)
+                ))
+        );
         pdf = new TS_FilePdfItextUtils(localFile);
         setFontStyle();
     }
@@ -381,22 +404,42 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
             return true;
         }
         d.ci("setFontStyle");
-        var k_half = 0.8f;
-        var k_file = 1f;
-        var fontFamilyPath = fileCommonConfig.fontFamilyPaths.get(fileCommonConfig.fontFamilyIdx);
-        pdfFont = TS_FilePdfItextUtils.getFontFrom(
-                fileCommonConfig.fontHeight,
-                fileCommonConfig.fontBold, fileCommonConfig.fontItalic,
-                pdfFontColor,
-                fontFamilyPath,
-                k_file);
-        pdfFont_half = TS_FilePdfItextUtils.getFontFrom(
-                (int) (fileCommonConfig.fontHeight * k_half),
-                fileCommonConfig.fontBold, fileCommonConfig.fontItalic,
-                pdfFontColor,
-                fontFamilyPath,
-                 k_file);
+        pdfFont = TGS_Coronator.of(Font.class).coronateAs(__ -> {
+            var family = fontFamilyFonts_pdf.get(fileCommonConfig.fontFamilyIdx);
+            if (fileCommonConfig.fontBold && fileCommonConfig.fontItalic) {
+                return family.boldItalic();
+            }
+            if (fileCommonConfig.fontItalic) {
+                return family.italic();
+            }
+            if (fileCommonConfig.fontBold) {
+                return family.bold();
+            }
+            return family.regular();
+        });
+        pdfFont_half = TGS_Coronator.of(Font.class).coronateAs(__ -> {
+            var family = fontFamilyFonts_pdfHalf.get(fileCommonConfig.fontFamilyIdx);
+            if (fileCommonConfig.fontBold && fileCommonConfig.fontItalic) {
+                return family.boldItalic();
+            }
+            if (fileCommonConfig.fontItalic) {
+                return family.italic();
+            }
+            if (fileCommonConfig.fontBold) {
+                return family.bold();
+            }
+            return family.regular();
+        });
         return true;
+    }
+
+    private Font getFontFrom(float k_half, int fontIdx, boolean bold, boolean italic) {
+        var k_file = 1f;
+        return TS_FilePdfItextUtils.getFontFrom(
+                (int) (fileCommonConfig.fontHeight * k_half),
+                bold, italic, pdfFontColor,
+                fileCommonConfig.fontFamilyPaths.get(fontIdx),
+                k_file);
     }
 
     @Override

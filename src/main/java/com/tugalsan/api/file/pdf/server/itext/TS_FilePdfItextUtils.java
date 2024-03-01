@@ -359,39 +359,32 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 
     public static Font getFontFrom(int fontSize, boolean bold, boolean italic, BaseColor fontColor,
             TGS_FontFamily<Path> fontFamilyPath, float fontSizeCorrectionForFontFile) {
-        return getFontFrom(fontSize, bold, italic, fontColor,
-                fontFamilyPath.bold(), fontFamilyPath.boldItalic(), fontFamilyPath.italic(), fontFamilyPath.regular(),
-                fontSizeCorrectionForFontFile);
-    }
-
-    public static Font getFontFrom(int fontSize, boolean bold, boolean italic, BaseColor fontColor,
-            Path fontPathBold, Path fontPathBoldItalic, Path fontPathItalic, Path fontPathRegular, float fontSizeCorrectionForFontFile) {
         var fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
         if (bold && italic) {
-            if (!TS_FileUtils.isExistFile(fontPathBoldItalic)) {
-                d.ce("getFontFrom", "UTF8 font bold & italic not find!", fontPathBoldItalic);
+            if (!TS_FileUtils.isExistFile(fontFamilyPath.boldItalic())) {
+                d.ce("getFontFrom", "UTF8 font bold & italic not find!", fontFamilyPath.boldItalic());
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
             return new Font(
                     TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
-                                fontPathBoldItalic.toAbsolutePath().normalize().toString(),
+                                fontFamilyPath.boldItalic().toAbsolutePath().normalize().toString(),
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                         );
                     }),
                     fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
             );
         }
-        if (!TS_FileUtils.isExistFile(fontPathBold)) {
+        if (!TS_FileUtils.isExistFile(fontFamilyPath.bold())) {
             if (bold) {
-                if (!TS_FileUtils.isExistFile(fontPathBold)) {
-                    d.ce("getFontFrom", "UTF8 font bold not find!", fontPathBold);
+                if (!TS_FileUtils.isExistFile(fontFamilyPath.bold())) {
+                    d.ce("getFontFrom", "UTF8 font bold not find!", fontFamilyPath.bold());
                     return getFontInternal(fontSize, bold, italic, fontColor);
                 }
                 return new Font(
                         TGS_UnSafe.call(() -> {
                             return BaseFont.createFont(
-                                    fontPathBold.toAbsolutePath().normalize().toString(),
+                                    fontFamilyPath.bold().toAbsolutePath().normalize().toString(),
                                     BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                             );
                         }),
@@ -400,28 +393,28 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
             }
         }
         if (italic) {
-            if (!TS_FileUtils.isExistFile(fontPathItalic)) {
-                d.ce("getFontFrom", "UTF8 font italic not find!", fontPathItalic);
+            if (!TS_FileUtils.isExistFile(fontFamilyPath.italic())) {
+                d.ce("getFontFrom", "UTF8 font italic not find!", fontFamilyPath.italic());
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
             return new Font(
                     TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
-                                fontPathItalic.toAbsolutePath().normalize().toString(),
+                                fontFamilyPath.italic().toAbsolutePath().normalize().toString(),
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                         );
                     }),
                     fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
             );
         }
-        if (!TS_FileUtils.isExistFile(fontPathRegular)) {
-            d.ce("getFontFrom", "UTF8 font regular not find!", fontPathRegular);
+        if (!TS_FileUtils.isExistFile(fontFamilyPath.regular())) {
+            d.ce("getFontFrom", "UTF8 font regular not find!", fontFamilyPath.regular());
             return getFontInternal(fontSize, bold, italic, fontColor);
         }
         return new Font(
                 TGS_UnSafe.call(() -> {
                     return BaseFont.createFont(
-                            fontPathRegular.toAbsolutePath().normalize().toString(),
+                            fontFamilyPath.regular().toAbsolutePath().normalize().toString(),
                             BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                     );
                 }),
