@@ -15,6 +15,7 @@ import com.tugalsan.api.font.client.TGS_FontFamily;
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst;
 import com.tugalsan.api.tuple.client.TGS_Tuple2;
+import com.tugalsan.api.tuple.client.TGS_Tuple7;
 import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FilePdfItextUtils implements AutoCloseable {
@@ -359,12 +360,22 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
         table.addCell(cell);
     }
 
+    final private static TS_ThreadSyncLst<TGS_Tuple7<Integer, Boolean, Boolean, BaseColor, Path, Float, Font>> getFontFrom_buffer = TS_ThreadSyncLst.of();
+
     public static Font getFontFrom(int fontSize, boolean bold, boolean italic, BaseColor fontColor,
             TGS_FontFamily<Path> fontFamilyPath, float fontSizeCorrectionForFontFile) {
+        TGS_Tuple7<Integer, Boolean, Boolean, BaseColor, Path, Float, Font> tuple = TGS_Tuple7.of(
+                fontSize, bold, italic, fontColor, null, fontSizeCorrectionForFontFile, null
+        );
         if (bold && italic) {
             var fontAlreadyExists = getFontFrom_buffer.stream()
-                    .filter(t -> t.value0.equals(fontFamilyPath.boldItalic()))
-                    .map(t -> t.value1)
+                    .filter(t -> t.value0.equals(fontSize))
+                    .filter(t -> t.value1.equals(bold))
+                    .filter(t -> t.value2.equals(italic))
+                    .filter(t -> t.value3.equals(fontColor))
+                    .filter(t -> t.value4.equals(fontFamilyPath.boldItalic()))
+                    .filter(t -> t.value5.equals(fontSizeCorrectionForFontFile))
+                    .map(t -> t.value6)
                     .findAny().orElse(null);
             if (fontAlreadyExists != null) {
                 return fontAlreadyExists;
@@ -382,13 +393,20 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                     }),
                     fontSize * fontSizeCorrectionForFontFile, Font.BOLDITALIC, fontColor
             );
-            getFontFrom_buffer.add(TGS_Tuple2.of(fontFamilyPath.boldItalic(), newFont));
+            tuple.value4 = fontFamilyPath.boldItalic();
+            tuple.value6 = newFont;
+            getFontFrom_buffer.add(tuple);
             return newFont;
         }
         if (bold) {
             var fontAlreadyExists = getFontFrom_buffer.stream()
-                    .filter(t -> t.value0.equals(fontFamilyPath.bold()))
-                    .map(t -> t.value1)
+                    .filter(t -> t.value0.equals(fontSize))
+                    .filter(t -> t.value1.equals(bold))
+                    .filter(t -> t.value2.equals(italic))
+                    .filter(t -> t.value3.equals(fontColor))
+                    .filter(t -> t.value4.equals(fontFamilyPath.bold()))
+                    .filter(t -> t.value5.equals(fontSizeCorrectionForFontFile))
+                    .map(t -> t.value6)
                     .findAny().orElse(null);
             if (fontAlreadyExists != null) {
                 return fontAlreadyExists;
@@ -406,13 +424,20 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                     }),
                     fontSize * fontSizeCorrectionForFontFile, Font.BOLD, fontColor
             );
-            getFontFrom_buffer.add(TGS_Tuple2.of(fontFamilyPath.bold(), newFont));
+            tuple.value4 = fontFamilyPath.bold();
+            tuple.value6 = newFont;
+            getFontFrom_buffer.add(tuple);
             return newFont;
         }
         if (italic) {
             var fontAlreadyExists = getFontFrom_buffer.stream()
-                    .filter(t -> t.value0.equals(fontFamilyPath.italic()))
-                    .map(t -> t.value1)
+                    .filter(t -> t.value0.equals(fontSize))
+                    .filter(t -> t.value1.equals(bold))
+                    .filter(t -> t.value2.equals(italic))
+                    .filter(t -> t.value3.equals(fontColor))
+                    .filter(t -> t.value4.equals(fontFamilyPath.italic()))
+                    .filter(t -> t.value5.equals(fontSizeCorrectionForFontFile))
+                    .map(t -> t.value6)
                     .findAny().orElse(null);
             if (fontAlreadyExists != null) {
                 return fontAlreadyExists;
@@ -430,12 +455,19 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                     }),
                     fontSize * fontSizeCorrectionForFontFile, Font.ITALIC, fontColor
             );
-            getFontFrom_buffer.add(TGS_Tuple2.of(fontFamilyPath.italic(), newFont));
+            tuple.value4 = fontFamilyPath.italic();
+            tuple.value6 = newFont;
+            getFontFrom_buffer.add(tuple);
             return newFont;
         }
         var fontAlreadyExists = getFontFrom_buffer.stream()
-                .filter(t -> t.value0.equals(fontFamilyPath.regular()))
-                .map(t -> t.value1)
+                .filter(t -> t.value0.equals(fontSize))
+                .filter(t -> t.value1.equals(bold))
+                .filter(t -> t.value2.equals(italic))
+                .filter(t -> t.value3.equals(fontColor))
+                .filter(t -> t.value4.equals(fontFamilyPath.regular()))
+                .filter(t -> t.value5.equals(fontSizeCorrectionForFontFile))
+                .map(t -> t.value6)
                 .findAny().orElse(null);
         if (fontAlreadyExists != null) {
             return fontAlreadyExists;
@@ -453,10 +485,11 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                 }),
                 fontSize * fontSizeCorrectionForFontFile, Font.NORMAL, fontColor
         );
-        getFontFrom_buffer.add(TGS_Tuple2.of(fontFamilyPath.regular(), newFont));
+        tuple.value4 = fontFamilyPath.regular();
+        tuple.value6 = newFont;
+        getFontFrom_buffer.add(tuple);
         return newFont;
     }
-    final private static TS_ThreadSyncLst<TGS_Tuple2<Path, Font>> getFontFrom_buffer = TS_ThreadSyncLst.of();
 
     public static Font getFontInternal(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
         var fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
