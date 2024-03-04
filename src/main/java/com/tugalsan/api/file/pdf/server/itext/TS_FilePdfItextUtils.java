@@ -384,6 +384,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                 d.ce("getFontFrom", "UTF8 font bold & italic not find!", fontFamilyPath.boldItalic());
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
+            var fontIsRegular = fontFamilyPath.regular().equals(fontFamilyPath.boldItalic());
             var newFont = new Font(
                     TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
@@ -391,7 +392,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                         );
                     }),
-                    fontSize * fontSizeCorrectionForFontFile, Font.BOLDITALIC, fontColor
+                    fontSize * fontSizeCorrectionForFontFile, fontIsRegular ? Font.BOLDITALIC : Font.NORMAL, fontColor
             );
             tuple.value4 = fontFamilyPath.boldItalic();
             tuple.value6 = newFont;
@@ -415,6 +416,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                 d.ce("getFontFrom", "UTF8 font bold not find!", fontFamilyPath.bold());
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
+            var fontIsRegular = fontFamilyPath.regular().equals(fontFamilyPath.boldItalic());
             var newFont = new Font(
                     TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
@@ -422,7 +424,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                         );
                     }),
-                    fontSize * fontSizeCorrectionForFontFile, Font.BOLD, fontColor
+                    fontSize * fontSizeCorrectionForFontFile, fontIsRegular ? Font.BOLD : Font.NORMAL, fontColor
             );
             tuple.value4 = fontFamilyPath.bold();
             tuple.value6 = newFont;
@@ -446,6 +448,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                 d.ce("getFontFrom", "UTF8 font italic not find!", fontFamilyPath.italic());
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
+            var fontIsRegular = fontFamilyPath.regular().equals(fontFamilyPath.boldItalic());
             var newFont = new Font(
                     TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
@@ -453,7 +456,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                         );
                     }),
-                    fontSize * fontSizeCorrectionForFontFile, Font.ITALIC, fontColor
+                    fontSize * fontSizeCorrectionForFontFile, fontIsRegular ? Font.ITALIC : Font.NORMAL, fontColor
             );
             tuple.value4 = fontFamilyPath.italic();
             tuple.value6 = newFont;
