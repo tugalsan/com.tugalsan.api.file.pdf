@@ -13,6 +13,8 @@ import com.tugalsan.api.coronator.client.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.font.client.TGS_FontFamily;
 import com.tugalsan.api.log.server.TS_Log;
+import com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst;
+import com.tugalsan.api.tuple.client.TGS_Tuple2;
 import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FilePdfItextUtils implements AutoCloseable {
@@ -359,68 +361,102 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 
     public static Font getFontFrom(int fontSize, boolean bold, boolean italic, BaseColor fontColor,
             TGS_FontFamily<Path> fontFamilyPath, float fontSizeCorrectionForFontFile) {
-        var fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
         if (bold && italic) {
+            var fontAlreadyExists = getFontFrom_buffer.stream()
+                    .filter(t -> t.value0.equals(fontFamilyPath.boldItalic()))
+                    .map(t -> t.value1)
+                    .findAny().orElse(null);
+            if (fontAlreadyExists != null) {
+                return fontAlreadyExists;
+            }
             if (!TS_FileUtils.isExistFile(fontFamilyPath.boldItalic())) {
                 d.ce("getFontFrom", "UTF8 font bold & italic not find!", fontFamilyPath.boldItalic());
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
-            return new Font(
+            var newFont = new Font(
                     TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
                                 fontFamilyPath.boldItalic().toAbsolutePath().normalize().toString(),
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                         );
                     }),
-                    fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
+                    fontSize * fontSizeCorrectionForFontFile, Font.BOLDITALIC, fontColor
             );
+            getFontFrom_buffer.add(TGS_Tuple2.of(fontFamilyPath.boldItalic(), newFont));
+            return newFont;
         }
-        if (!TS_FileUtils.isExistFile(fontFamilyPath.bold())) {
-            if (bold) {
-                if (!TS_FileUtils.isExistFile(fontFamilyPath.bold())) {
-                    d.ce("getFontFrom", "UTF8 font bold not find!", fontFamilyPath.bold());
-                    return getFontInternal(fontSize, bold, italic, fontColor);
-                }
-                return new Font(
-                        TGS_UnSafe.call(() -> {
-                            return BaseFont.createFont(
-                                    fontFamilyPath.bold().toAbsolutePath().normalize().toString(),
-                                    BaseFont.IDENTITY_H, BaseFont.EMBEDDED
-                            );
-                        }),
-                        fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
-                );
+        if (bold) {
+            var fontAlreadyExists = getFontFrom_buffer.stream()
+                    .filter(t -> t.value0.equals(fontFamilyPath.bold()))
+                    .map(t -> t.value1)
+                    .findAny().orElse(null);
+            if (fontAlreadyExists != null) {
+                return fontAlreadyExists;
             }
+            if (!TS_FileUtils.isExistFile(fontFamilyPath.bold())) {
+                d.ce("getFontFrom", "UTF8 font bold not find!", fontFamilyPath.bold());
+                return getFontInternal(fontSize, bold, italic, fontColor);
+            }
+            var newFont = new Font(
+                    TGS_UnSafe.call(() -> {
+                        return BaseFont.createFont(
+                                fontFamilyPath.bold().toAbsolutePath().normalize().toString(),
+                                BaseFont.IDENTITY_H, BaseFont.EMBEDDED
+                        );
+                    }),
+                    fontSize * fontSizeCorrectionForFontFile, Font.BOLD, fontColor
+            );
+            getFontFrom_buffer.add(TGS_Tuple2.of(fontFamilyPath.bold(), newFont));
+            return newFont;
         }
         if (italic) {
+            var fontAlreadyExists = getFontFrom_buffer.stream()
+                    .filter(t -> t.value0.equals(fontFamilyPath.italic()))
+                    .map(t -> t.value1)
+                    .findAny().orElse(null);
+            if (fontAlreadyExists != null) {
+                return fontAlreadyExists;
+            }
             if (!TS_FileUtils.isExistFile(fontFamilyPath.italic())) {
                 d.ce("getFontFrom", "UTF8 font italic not find!", fontFamilyPath.italic());
                 return getFontInternal(fontSize, bold, italic, fontColor);
             }
-            return new Font(
+            var newFont = new Font(
                     TGS_UnSafe.call(() -> {
                         return BaseFont.createFont(
                                 fontFamilyPath.italic().toAbsolutePath().normalize().toString(),
                                 BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                         );
                     }),
-                    fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
+                    fontSize * fontSizeCorrectionForFontFile, Font.ITALIC, fontColor
             );
+            getFontFrom_buffer.add(TGS_Tuple2.of(fontFamilyPath.italic(), newFont));
+            return newFont;
+        }
+        var fontAlreadyExists = getFontFrom_buffer.stream()
+                .filter(t -> t.value0.equals(fontFamilyPath.regular()))
+                .map(t -> t.value1)
+                .findAny().orElse(null);
+        if (fontAlreadyExists != null) {
+            return fontAlreadyExists;
         }
         if (!TS_FileUtils.isExistFile(fontFamilyPath.regular())) {
             d.ce("getFontFrom", "UTF8 font regular not find!", fontFamilyPath.regular());
             return getFontInternal(fontSize, bold, italic, fontColor);
         }
-        return new Font(
+        var newFont = new Font(
                 TGS_UnSafe.call(() -> {
                     return BaseFont.createFont(
                             fontFamilyPath.regular().toAbsolutePath().normalize().toString(),
                             BaseFont.IDENTITY_H, BaseFont.EMBEDDED
                     );
                 }),
-                fontSize * fontSizeCorrectionForFontFile, fontStyle, fontColor
+                fontSize * fontSizeCorrectionForFontFile, Font.NORMAL, fontColor
         );
+        getFontFrom_buffer.add(TGS_Tuple2.of(fontFamilyPath.regular(), newFont));
+        return newFont;
     }
+    final private static TS_ThreadSyncLst<TGS_Tuple2<Path, Font>> getFontFrom_buffer = TS_ThreadSyncLst.of();
 
     public static Font getFontInternal(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
         var fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));

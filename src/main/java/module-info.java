@@ -6,7 +6,9 @@ module com.tugalsan.api.file.pdf {
     requires org.apache.pdfbox.io;
     requires net.sf.cssbox.pdf2dom;
     requires com.tugalsan.api.unsafe;
+    requires com.tugalsan.api.tuple;
     requires com.tugalsan.api.runnable;
+    requires com.tugalsan.api.thread;
     requires com.tugalsan.api.stream;
     requires com.tugalsan.api.coronator;
     requires com.tugalsan.api.font;
