@@ -495,7 +495,18 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
     }
 
     public static Font getFontInternal(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
-        var fontStyle = (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL))));
+        var fontStyle = TGS_Coronator.ofInt().coronateAs(__ -> {
+            if (bold && italic) {
+                return Font.BOLDITALIC;
+            }
+            if (bold){
+                return Font.BOLD;
+            }
+            if (italic){
+                return Font.ITALIC;
+            }
+            return Font.NORMAL;
+        });
         return FontFactory.getFont(BaseFont.TIMES_ROMAN, TGS_CharSet.IBM_TURKISH(), true, fontSize, fontStyle, fontColor);
         //return FontFactory.getFont("arialuni", "Cp857", true, fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
         //return FontFactory.getFont("arialuni", "Identity-H", fontSize, (bold & italic ? Font.BOLDITALIC : (bold && !italic ? Font.BOLD : ((!bold && italic ? Font.ITALIC : Font.NORMAL)))), fontColor);
