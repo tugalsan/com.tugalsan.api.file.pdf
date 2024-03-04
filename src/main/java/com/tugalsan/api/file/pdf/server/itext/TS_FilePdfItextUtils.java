@@ -14,7 +14,6 @@ import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.font.client.TGS_FontFamily;
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst;
-import com.tugalsan.api.tuple.client.TGS_Tuple2;
 import com.tugalsan.api.tuple.client.TGS_Tuple7;
 import com.tugalsan.api.unsafe.client.*;
 
@@ -499,10 +498,10 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
             if (bold && italic) {
                 return Font.BOLDITALIC;
             }
-            if (bold){
+            if (bold) {
                 return Font.BOLD;
             }
-            if (italic){
+            if (italic) {
                 return Font.ITALIC;
             }
             return Font.NORMAL;
