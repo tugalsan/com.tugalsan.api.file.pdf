@@ -87,6 +87,15 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         setFontStyle();
     }
 
+    private Font getFontFrom(float k_half, int fontIdx, boolean bold, boolean italic) {
+        var k_file = 1f;
+        return TS_FilePdfItextUtils.getFontFrom(
+                (int) (fileCommonConfig.fontHeight * k_half),
+                bold, italic, pdfFontColor,
+                fileCommonConfig.fontFamilyPaths.get(fontIdx).regular(),
+                k_file);
+    }
+
     @Override
     public boolean saveFile(String errorSource) {
         if (isClosed()) {
@@ -431,15 +440,6 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
             return family.regular();
         });
         return true;
-    }
-
-    private Font getFontFrom(float k_half, int fontIdx, boolean bold, boolean italic) {
-        var k_file = 1f;
-        return TS_FilePdfItextUtils.getFontFrom(
-                (int) (fileCommonConfig.fontHeight * k_half),
-                bold, italic, pdfFontColor,
-                fileCommonConfig.fontFamilyPaths.get(fontIdx).regular(),
-                k_file);
     }
 
     @Override
