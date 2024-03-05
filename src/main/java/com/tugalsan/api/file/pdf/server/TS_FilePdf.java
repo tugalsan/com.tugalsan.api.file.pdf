@@ -438,7 +438,7 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         return TS_FilePdfItextUtils.getFontFrom(
                 (int) (fileCommonConfig.fontHeight * k_half),
                 bold, italic, pdfFontColor,
-                fileCommonConfig.fontFamilyPaths.get(fontIdx),
+                fileCommonConfig.fontFamilyPaths.get(fontIdx).regular(),
                 k_file);
     }
 
