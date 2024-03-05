@@ -357,10 +357,10 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
         table.addCell(cell);
     }
 
-    final private record FontBufferItem(Path path, int height, boolean bold, boolean italic, BaseColor fontColor, float fontSizeCorrectionForFontFile, Font pdfFont) {
-
-    }
-    final private static TS_ThreadSyncLst<FontBufferItem> fontBuffer = TS_ThreadSyncLst.of();
+//    final private record FontBufferItem(Path path, int height, boolean bold, boolean italic, BaseColor fontColor, float fontSizeCorrectionForFontFile, Font pdfFont) {
+//
+//    }
+//    final private static TS_ThreadSyncLst<FontBufferItem> fontBuffer = TS_ThreadSyncLst.of();
 
     public static Font getFontFrom(int height, boolean bold, boolean italic, BaseColor fontColor,
             Path path, float fontSizeCorrectionForFontFile) {
@@ -376,18 +376,18 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
             }
             return Font.NORMAL;
         });
-        var fontAlreadyExists = fontBuffer.stream()
-                .filter(t -> t.path.equals(path))
-                .filter(t -> t.height == height)
-                .filter(t -> t.bold == bold)
-                .filter(t -> t.italic == italic)
-                .filter(t -> t.fontColor.equals(fontColor))
-                .filter(t -> t.fontSizeCorrectionForFontFile == fontSizeCorrectionForFontFile)
-                .map(t -> t.pdfFont)
-                .findAny().orElse(null);
-        if (fontAlreadyExists != null) {
-            return fontAlreadyExists;
-        }
+//        var fontAlreadyExists = fontBuffer.stream()
+//                .filter(t -> t.path.equals(path))
+//                .filter(t -> t.height == height)
+//                .filter(t -> t.bold == bold)
+//                .filter(t -> t.italic == italic)
+//                .filter(t -> t.fontColor.equals(fontColor))
+//                .filter(t -> t.fontSizeCorrectionForFontFile == fontSizeCorrectionForFontFile)
+//                .map(t -> t.pdfFont)
+//                .findAny().orElse(null);
+//        if (fontAlreadyExists != null) {
+//            return fontAlreadyExists;
+//        }
         if (!TS_FileUtils.isExistFile(path)) {
             d.ce("getFontFrom", "UTF8 font bold not find!", path);
             return getFontInternal(height, bold, italic, fontColor);
@@ -401,7 +401,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                 }),
                 height * fontSizeCorrectionForFontFile, style, fontColor
         );
-        fontBuffer.add(new FontBufferItem(path, height, bold, italic, fontColor, fontSizeCorrectionForFontFile, newPdfFont));
+//        fontBuffer.add(new FontBufferItem(path, height, bold, italic, fontColor, fontSizeCorrectionForFontFile, newPdfFont));
         return newPdfFont;
     }
 
