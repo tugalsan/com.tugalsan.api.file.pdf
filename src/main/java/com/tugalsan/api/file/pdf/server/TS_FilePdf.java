@@ -80,7 +80,7 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
 //                        getFontFrom(0.8f, fontIdx, true, true)
 //                ))
 //        );
-//        pdf = new TS_FilePdfItextUtils(localFile);
+        pdf = new TS_FilePdfItextUtils(localFile);
         setFontStyle();
     }
 
