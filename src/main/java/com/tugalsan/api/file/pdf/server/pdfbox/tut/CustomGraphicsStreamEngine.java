@@ -5,7 +5,8 @@
  */
 package com.tugalsan.api.file.pdf.server.pdfbox.tut;
 
-import com.tugalsan.api.unsafe.client.*;
+import com.tugalsan.api.log.server.TS_Log;
+import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
 import java.io.File;
 import java.io.IOException;
 import java.awt.geom.*;
@@ -33,6 +34,8 @@ import org.apache.pdfbox.util.Vector;
  */
 public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
 
+    final private static TS_Log d = TS_Log.of(CustomGraphicsStreamEngine.class);
+
     /**
      * Constructor.
      *
@@ -43,16 +46,20 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
     }
 
     public static void main(String[] args) {
-        TGS_UnSafe.run(() -> {
-            var file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
-                    "custom-render-demo.pdf");
+        var file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
+                "custom-render-demo.pdf");
 
-            try ( var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
-                var page = doc.getPage(0);
-                var engine = new CustomGraphicsStreamEngine(page);
-                engine.run();
+        try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
+            var page = doc.getPage(0);
+            var engine = new CustomGraphicsStreamEngine(page);
+            var u = engine.run();
+            if (u.isExcuse()) {
+                d.ct("main", u.excuse());
+                return;
             }
-        });
+        } catch (IOException ex) {
+            d.ct("main", ex);
+        }
     }
 
     /**
@@ -60,13 +67,16 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
      *
      * @throws IOException If there is an IO error while drawing the page.
      */
-    public void run() {
-        TGS_UnSafe.run(() -> {
+    public TGS_UnionExcuseVoid run() {
+        try {
             processPage(getPage());
             for (var annotation : getPage().getAnnotations()) {
                 showAnnotation(annotation);
             }
-        });
+            return TGS_UnionExcuseVoid.ofVoid();
+        } catch (IOException ex) {
+            return TGS_UnionExcuseVoid.ofExcuse(ex);
+        }
     }
 
     @Override
@@ -141,35 +151,29 @@ public class CustomGraphicsStreamEngine extends PDFGraphicsStreamEngine {
      * Overridden from PDFStreamEngine.
      */
     @Override
-    public void showTextString(byte[] string) {
-        TGS_UnSafe.run(() -> {
-            System.out.print("showTextString \"");
-            super.showTextString(string);
-            System.out.println("\"");
-        });
+    public void showTextString(byte[] string) throws IOException {
+        System.out.print("showTextString \"");
+        super.showTextString(string);
+        System.out.println("\"");
     }
 
     /**
      * Overridden from PDFStreamEngine.
      */
     @Override
-    public void showTextStrings(COSArray array) {
-        TGS_UnSafe.run(() -> {
-            System.out.print("showTextStrings \"");
-            super.showTextStrings(array);
-            System.out.println("\"");
-        });
+    public void showTextStrings(COSArray array) throws IOException {
+        System.out.print("showTextStrings \"");
+        super.showTextStrings(array);
+        System.out.println("\"");
     }
 
     /**
      * Overridden from PDFStreamEngine.
      */
     @Override
-    protected void showGlyph(Matrix textRenderingMatrix, PDFont font, int code, Vector displacement) {
-        TGS_UnSafe.run(() -> {
-            System.out.print("showGlyph " + code);
-            super.showGlyph(textRenderingMatrix, font, code, displacement);
-        });
+    protected void showGlyph(Matrix textRenderingMatrix, PDFont font, int code, Vector displacement) throws IOException {
+        System.out.print("showGlyph " + code);
+        super.showGlyph(textRenderingMatrix, font, code, displacement);
     }
 
 // NOTE: there are may more methods in PDFStreamEngine which can be overridden here too.

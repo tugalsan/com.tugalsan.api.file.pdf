@@ -1,6 +1,6 @@
 package com.tugalsan.api.file.pdf.server.pdfbox.tut;
 
-import com.tugalsan.api.unsafe.client.*;
+import com.tugalsan.api.log.server.TS_Log;
 import java.io.*;
 import javax.imageio.*;
 import java.awt.*;
@@ -31,17 +31,20 @@ import org.apache.pdfbox.util.Vector;
  */
 public class CustomPageDrawer {
 
-    public static void main(String[] args) {
-        TGS_UnSafe.run(() -> {
-            var file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
-                    "custom-render-demo.pdf");
+    final private static TS_Log d = TS_Log.of(CustomPageDrawer.class);
 
-            try ( var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
-                var renderer = new MyPDFRenderer(doc);
-                var image = renderer.renderImage(0);
-                ImageIO.write(image, "PNG", new File("custom-render.png"));
-            }
-        });
+    public static void main(String[] args) {
+        var file = new File("src/main/resources/org/apache/pdfbox/examples/rendering/",
+                "custom-render-demo.pdf");
+
+        try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
+            var renderer = new MyPDFRenderer(doc);
+            var image = renderer.renderImage(0);
+            var result = ImageIO.write(image, "PNG", new File("custom-render.png"));
+            d.cr("main", "result", result);
+        } catch (IOException ex) {
+            d.ct("main", ex);
+        }
     }
 
     /**
@@ -72,98 +75,90 @@ public class CustomPageDrawer {
          * Color replacement.
          */
         @Override
-        protected Paint getPaint(PDColor color) {
-            return TGS_UnSafe.call(() -> {
-                // if this is the non-stroking color, find red, ignoring alpha channel
-                if (getGraphicsState().getNonStrokingColor() == color
-                        && color.toRGB() == (Color.RED.getRGB() & 0x00FFFFFF)) {
-                    // replace it with blue
-                    return Color.BLUE;
-                }
-                return super.getPaint(color);
-            });
+        protected Paint getPaint(PDColor color) throws IOException {
+            // if this is the non-stroking color, find red, ignoring alpha channel
+            if (getGraphicsState().getNonStrokingColor() == color
+                    && color.toRGB() == (Color.RED.getRGB() & 0x00FFFFFF)) {
+                // replace it with blue
+                return Color.BLUE;
+            }
+            return super.getPaint(color);
         }
 
         /**
          * Glyph bounding boxes.
          */
         @Override
-        protected void showGlyph(Matrix textRenderingMatrix, PDFont font, int code, Vector displacement) {
-            TGS_UnSafe.run(() -> {
-                // draw glyph
-                super.showGlyph(textRenderingMatrix, font, code, displacement);
+        protected void showGlyph(Matrix textRenderingMatrix, PDFont font, int code, Vector displacement) throws IOException {
+            // draw glyph
+            super.showGlyph(textRenderingMatrix, font, code, displacement);
 
-                // bbox in EM -> user units
-                Shape bbox = new Rectangle2D.Float(0, 0, font.getWidth(code) / 1000, 1);
-                var at = textRenderingMatrix.createAffineTransform();
-                bbox = at.createTransformedShape(bbox);
+            // bbox in EM -> user units
+            Shape bbox = new Rectangle2D.Float(0, 0, font.getWidth(code) / 1000, 1);
+            var at = textRenderingMatrix.createAffineTransform();
+            bbox = at.createTransformedShape(bbox);
 
-                // save
-                var graphics = getGraphics();
-                var color = graphics.getColor();
-                var stroke = graphics.getStroke();
-                var clip = graphics.getClip();
+            // save
+            var graphics = getGraphics();
+            var color = graphics.getColor();
+            var stroke = graphics.getStroke();
+            var clip = graphics.getClip();
 
-                // draw
-                graphics.setClip(graphics.getDeviceConfiguration().getBounds());
-                graphics.setColor(Color.RED);
-                graphics.setStroke(new BasicStroke(.5f));
-                graphics.draw(bbox);
+            // draw
+            graphics.setClip(graphics.getDeviceConfiguration().getBounds());
+            graphics.setColor(Color.RED);
+            graphics.setStroke(new BasicStroke(.5f));
+            graphics.draw(bbox);
 
-                // restore
-                graphics.setStroke(stroke);
-                graphics.setColor(color);
-                graphics.setClip(clip);
-            });
+            // restore
+            graphics.setStroke(stroke);
+            graphics.setColor(color);
+            graphics.setClip(clip);
         }
 
         /**
          * Filled path bounding boxes.
          */
         @Override
-        public void fillPath(int windingRule) {
-            TGS_UnSafe.run(() -> {
-                // bbox in user units
-                Shape bbox = getLinePath().getBounds2D();
+        public void fillPath(int windingRule) throws IOException {
+            // bbox in user units
+            Shape bbox = getLinePath().getBounds2D();
 
-                // draw path (note that getLinePath() is now reset)
-                super.fillPath(windingRule);
+            // draw path (note that getLinePath() is now reset)
+            super.fillPath(windingRule);
 
-                // save
-                var graphics = getGraphics();
-                var color = graphics.getColor();
-                var stroke = graphics.getStroke();
-                var clip = graphics.getClip();
+            // save
+            var graphics = getGraphics();
+            var color = graphics.getColor();
+            var stroke = graphics.getStroke();
+            var clip = graphics.getClip();
 
-                // draw
-                graphics.setClip(graphics.getDeviceConfiguration().getBounds());
-                graphics.setColor(Color.GREEN);
-                graphics.setStroke(new BasicStroke(.5f));
-                graphics.draw(bbox);
+            // draw
+            graphics.setClip(graphics.getDeviceConfiguration().getBounds());
+            graphics.setColor(Color.GREEN);
+            graphics.setStroke(new BasicStroke(.5f));
+            graphics.draw(bbox);
 
-                // restore
-                graphics.setStroke(stroke);
-                graphics.setColor(color);
-                graphics.setClip(clip);
-            });
+            // restore
+            graphics.setStroke(stroke);
+            graphics.setColor(color);
+            graphics.setClip(clip);
         }
 
         /**
          * Custom annotation rendering.
          */
         @Override
-        public void showAnnotation(PDAnnotation annotation) {
-            TGS_UnSafe.run(() -> {
-                // save
-                saveGraphicsState();
+        public void showAnnotation(PDAnnotation annotation) throws IOException {
+            // save
+            saveGraphicsState();
 
-                // 35% alpha
-                getGraphicsState().setNonStrokeAlphaConstant(0.35);
-                super.showAnnotation(annotation);
+            // 35% alpha
+            getGraphicsState().setNonStrokeAlphaConstant(0.35);
+            super.showAnnotation(annotation);
 
-                // restore
-                restoreGraphicsState();
-            });
+            // restore
+            restoreGraphicsState();
         }
     }
 }

@@ -12,8 +12,9 @@ import java.util.stream.IntStream;
 import com.tugalsan.api.coronator.client.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.log.server.TS_Log;
-import com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst;
-import com.tugalsan.api.unsafe.client.*;
+import com.tugalsan.api.union.client.TGS_UnionExcuse;
+import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
+import java.io.IOException;
 
 public class TS_FilePdfItextUtils implements AutoCloseable {
 
@@ -143,8 +144,8 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
         this.file = file;
     }
 
-    public void createNewPage(int pageSizeAX0, boolean landscape, Integer marginLeft0, Integer marginRight0, Integer marginTop0, Integer marginBottom0) {
-        TGS_UnSafe.run(() -> {
+    public TGS_UnionExcuseVoid createNewPage(int pageSizeAX0, boolean landscape, Integer marginLeft0, Integer marginRight0, Integer marginTop0, Integer marginBottom0) {
+        try {
             d.ci("createNewPage");
             var marginLeft = marginLeft0 == null ? 50 : marginLeft0;
             var marginRight = marginRight0 == null ? 10 : marginRight0;
@@ -165,13 +166,20 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
                     .coronate();
             if (document == null) {
                 document = new TS_FilePdfItextDocumentAutoClosable(pageSize, marginLeft, marginRight, marginTop, marginBottom);
-                writer = TS_FilePdfItextPDFWriter.getInstance(document, Files.newOutputStream(file));//I KNOW
+                var u_writer = TS_FilePdfItextPDFWriter.getInstance(document, Files.newOutputStream(file));//I KNOW;
+                if (u_writer.isExcuse()) {
+                    return u_writer.toExcuseVoid();
+                }
+                writer = u_writer.value();
                 document.open();
             } else {
                 document.setPageSize(pageSize);
                 document.newPage();
             }
-        });
+            return TGS_UnionExcuseVoid.ofVoid();
+        } catch (IOException ex) {
+            return TGS_UnionExcuseVoid.ofExcuse(ex);
+        }
     }
 
     public void setAlignLeft(Paragraph p) {
@@ -217,111 +225,149 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
         return Chunk.NEWLINE;
     }
 
-    public Image createImage(java.awt.Image imageFile, Color color) {
-        return TGS_UnSafe.call(() -> Image.getInstance(imageFile, color));
+    public TGS_UnionExcuse<Image> createImage(java.awt.Image imageFile, Color color) {
+        try {
+            return TGS_UnionExcuse.of(Image.getInstance(imageFile, color));
+        } catch (BadElementException | IOException ex) {
+            return TGS_UnionExcuse.ofExcuse(ex);
+        }
     }
 
-    public Image createImage(CharSequence filePath) {
-        return TGS_UnSafe.call(() -> Image.getInstance(filePath.toString()));
+    public TGS_UnionExcuse<Image> createImage(CharSequence filePath) {
+        try {
+            return TGS_UnionExcuse.of(Image.getInstance(filePath.toString()));
+        } catch (BadElementException | IOException ex) {
+            return TGS_UnionExcuse.ofExcuse(ex);
+        }
     }
 
-    public void addImageToPageLeft(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
-        addImageToPageLeft(createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK), textWrap, transperancyAsWhite);
+    public TGS_UnionExcuseVoid addImageToPageLeft(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
+        var u = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
+        if (u.isExcuse()) {
+            return u.toExcuseVoid();
+        }
+        return addImageToPageLeft(u.value(), textWrap, transperancyAsWhite);
     }
 
-    public void addImageToPageLeft(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        TGS_UnSafe.run(() -> {
-            if (image == null) {
-                TGS_UnSafe.thrw(d.className, "addImageToPageLeft", "image == null");
-                return;
-            }
-            if (textWrap) {
-                image.setAlignment(/*Image.ALIGN_LEFT | */Image.TEXTWRAP);//allign left is 0 already
-            } else {
-                image.setAlignment(Image.ALIGN_LEFT);
-            }
-            document.add(image);
-        });
-    }
-
-    public void addImageToPageRight(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
-        addImageToPageRight(createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK), textWrap, transperancyAsWhite);
-    }
-
-    public void addImageToPageRight(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        TGS_UnSafe.run(() -> {
-            if (image == null) {
-                TGS_UnSafe.thrw(d.className, "addImageToPageRight", "image == null");
-                return;
-            }
-            if (textWrap) {
-                image.setAlignment(Image.ALIGN_RIGHT | Image.TEXTWRAP);
-            } else {
-                image.setAlignment(Image.ALIGN_RIGHT);
-            }
-            document.add(image);
-        });
-    }
-
-    public void addImageToPageCenter(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
-        addImageToPageCenter(createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK), textWrap, transperancyAsWhite);
-    }
-
-    public void addImageToPageCenter(Image image, boolean textWrap, boolean transperancyAsWhite) {
-        TGS_UnSafe.run(() -> {
-            if (image == null) {
-                TGS_UnSafe.thrw(d.className, "addImageToPageCenter", "image == null");
-                return;
-            }
-            if (textWrap) {
-                image.setAlignment(Image.ALIGN_CENTER | Image.TEXTWRAP);
-            } else {
-                image.setAlignment(Image.ALIGN_CENTER);
-            }
-            document.add(image);
-        });
-    }
-
-    public void addImageToCellLeft(PdfPCell cell, java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
+    public TGS_UnionExcuseVoid addImageToPageLeft(Image image, boolean textWrap, boolean transperancyAsWhite) {
         if (image == null) {
-            d.ce("addImageToCellLeft.ERROR: TKPDFDocument.addImageToCellLeft.imageAWT == null");
-            return;
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "addImageToPageLeft", "image == null");
         }
-        var i = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
         if (textWrap) {
-            i.setAlignment(/*Image.ALIGN_LEFT | */Image.TEXTWRAP);//allign left is 0 already
+            image.setAlignment(/*Image.ALIGN_LEFT | */Image.TEXTWRAP);//allign left is 0 already
         } else {
-            i.setAlignment(Image.ALIGN_LEFT);
+            image.setAlignment(Image.ALIGN_LEFT);
         }
-        cell.addElement(i);
+        try {
+            document.add(image);
+            return TGS_UnionExcuseVoid.ofVoid();
+        } catch (DocumentException ex) {
+            return TGS_UnionExcuseVoid.ofExcuse(ex);
+        }
     }
 
-    public void addImageToCellRight(PdfPCell cell, java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
-        if (image == null) {
-            d.ce("addImageToCellRight.ERROR: TKPDFDocument.addImageToCellRight.imageAWT == null");
-            return;
+    public TGS_UnionExcuseVoid addImageToPageRight(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
+        var u = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
+        if (u.isExcuse()) {
+            return u.toExcuseVoid();
         }
-        var i = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
-        if (textWrap) {
-            i.setAlignment(Image.ALIGN_RIGHT | Image.TEXTWRAP);
-        } else {
-            i.setAlignment(Image.ALIGN_RIGHT);
-        }
-        cell.addElement(i);
+        return addImageToPageRight(u.value(), textWrap, transperancyAsWhite);
     }
 
-    public void addImageToCellCenter(PdfPCell cell, java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
+    public TGS_UnionExcuseVoid addImageToPageRight(Image image, boolean textWrap, boolean transperancyAsWhite) {
         if (image == null) {
-            d.ce("addImageToCellCenter.ERROR: TKPDFDocument.addImageToCellCenter.imageAWT == null");
-            return;
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "addImageToPageRight", "image == null");
         }
-        var i = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
         if (textWrap) {
-            i.setAlignment(Image.ALIGN_CENTER | Image.TEXTWRAP);
+            image.setAlignment(Image.ALIGN_RIGHT | Image.TEXTWRAP);
         } else {
-            i.setAlignment(Image.ALIGN_CENTER);
+            image.setAlignment(Image.ALIGN_RIGHT);
         }
-        cell.addElement(i);
+        try {
+            document.add(image);
+            return TGS_UnionExcuseVoid.ofVoid();
+        } catch (DocumentException ex) {
+            return TGS_UnionExcuseVoid.ofExcuse(ex);
+        }
+    }
+
+    public TGS_UnionExcuseVoid addImageToPageCenter(java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
+        var u = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
+        if (u.isExcuse()) {
+            return u.toExcuseVoid();
+        }
+        return addImageToPageCenter(u.value(), textWrap, transperancyAsWhite);
+    }
+
+    public TGS_UnionExcuseVoid addImageToPageCenter(Image image, boolean textWrap, boolean transperancyAsWhite) {
+        if (image == null) {
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "addImageToPageCenter", "image == null");
+        }
+        if (textWrap) {
+            image.setAlignment(Image.ALIGN_CENTER | Image.TEXTWRAP);
+        } else {
+            image.setAlignment(Image.ALIGN_CENTER);
+        }
+        try {
+            document.add(image);
+            return TGS_UnionExcuseVoid.ofVoid();
+        } catch (DocumentException ex) {
+            return TGS_UnionExcuseVoid.ofExcuse(ex);
+        }
+    }
+
+    public TGS_UnionExcuseVoid addImageToCellLeft(PdfPCell cell, java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
+        if (image == null) {
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "addImageToCellLeft", "addImageToCellLeft.ERROR: TKPDFDocument.addImageToCellLeft.imageAWT == null");
+        }
+        var u = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
+        if (u.isExcuse()) {
+            return u.toExcuseVoid();
+        }
+        var img = u.value();
+        if (textWrap) {
+            img.setAlignment(/*Image.ALIGN_LEFT | */Image.TEXTWRAP);//allign left is 0 already
+        } else {
+            img.setAlignment(Image.ALIGN_LEFT);
+        }
+        cell.addElement(img);
+        return TGS_UnionExcuseVoid.ofVoid();
+    }
+
+    public TGS_UnionExcuseVoid addImageToCellRight(PdfPCell cell, java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
+        if (image == null) {
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "addImageToCellRight", "addImageToCellRight.ERROR: TKPDFDocument.addImageToCellRight.imageAWT == null");
+        }
+        var u = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
+        if (u.isExcuse()) {
+            return u.toExcuseVoid();
+        }
+        var img = u.value();
+        if (textWrap) {
+            img.setAlignment(Image.ALIGN_RIGHT | Image.TEXTWRAP);
+        } else {
+            img.setAlignment(Image.ALIGN_RIGHT);
+        }
+        cell.addElement(img);
+        return TGS_UnionExcuseVoid.ofVoid();
+    }
+
+    public TGS_UnionExcuseVoid addImageToCellCenter(PdfPCell cell, java.awt.Image image, boolean textWrap, boolean transperancyAsWhite) {
+        if (image == null) {
+            return TGS_UnionExcuseVoid.ofExcuse(d.className, "addImageToCellCenter", "addImageToCellCenter.ERROR: TKPDFDocument.addImageToCellCenter.imageAWT == null");
+        }
+        var u = createImage(image, transperancyAsWhite ? Color.WHITE : Color.BLACK);
+        if (u.isExcuse()) {
+            return u.toExcuseVoid();
+        }
+        var img = u.value();
+        if (textWrap) {
+            img.setAlignment(Image.ALIGN_CENTER | Image.TEXTWRAP);
+        } else {
+            img.setAlignment(Image.ALIGN_CENTER);
+        }
+        cell.addElement(img);
+        return TGS_UnionExcuseVoid.ofVoid();
     }
 
     private void addChunkToParagraph(Chunk c, Paragraph p) {
@@ -344,12 +390,22 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
         p.add(createChunkNewLine());
     }
 
-    public void addParagraphToPage(Paragraph p) {
-        TGS_UnSafe.run(() -> document.add(p));
+    public TGS_UnionExcuseVoid addParagraphToPage(Paragraph p) {
+        try {
+            document.add(p);
+            return TGS_UnionExcuseVoid.ofVoid();
+        } catch (DocumentException ex) {
+            return TGS_UnionExcuseVoid.ofExcuse(ex);
+        }
     }
 
-    public void addTableToPage(PdfPTable table) {
-        TGS_UnSafe.run(() -> document.add(table));
+    public TGS_UnionExcuseVoid addTableToPage(PdfPTable table) {
+        try {
+            document.add(table);
+            return TGS_UnionExcuseVoid.ofVoid();
+        } catch (DocumentException ex) {
+            return TGS_UnionExcuseVoid.ofExcuse(ex);
+        }
     }
 
     public void addCellToTable(PdfPTable table, PdfPCell cell, int rotation_0_90_180_270) {
@@ -361,21 +417,20 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 //
 //    }
 //    final private static TS_ThreadSyncLst<FontBufferItem> fontBuffer = TS_ThreadSyncLst.of();
-
-    public static Font getFontFrom(int height, boolean bold, boolean italic, BaseColor fontColor,
-            Path path, float fontSizeCorrectionForFontFile) {
-        var style = TGS_Coronator.ofInt().coronateAs(__ -> {
-            if (bold && italic) {
-                return Font.BOLDITALIC;
-            }
-            if (bold) {
-                return Font.BOLD;
-            }
-            if (italic) {
-                return Font.ITALIC;
-            }
-            return Font.NORMAL;
-        });
+    public static TGS_UnionExcuse<Font> getFontFrom(int height, boolean bold, boolean italic, BaseColor fontColor, Path path, float fontSizeCorrectionForFontFile) {
+        try {
+            var style = TGS_Coronator.ofInt().coronateAs(__ -> {
+                if (bold && italic) {
+                    return Font.BOLDITALIC;
+                }
+                if (bold) {
+                    return Font.BOLD;
+                }
+                if (italic) {
+                    return Font.ITALIC;
+                }
+                return Font.NORMAL;
+            });
 //        var fontAlreadyExists = fontBuffer.stream()
 //                .filter(t -> t.path.equals(path))
 //                .filter(t -> t.height == height)
@@ -388,21 +443,24 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 //        if (fontAlreadyExists != null) {
 //            return fontAlreadyExists;
 //        }
-        if (!TS_FileUtils.isExistFile(path)) {
-            d.ce("getFontFrom", "UTF8 font bold not find!", path);
-            return getFontInternal(height, bold, italic, fontColor);
-        }
-        var newPdfFont = new Font(
-                TGS_UnSafe.call(() -> {
-                    return BaseFont.createFont(
-                            path.toAbsolutePath().normalize().toString(),
-                            BaseFont.IDENTITY_H, BaseFont.EMBEDDED
-                    );
-                }),
-                height * fontSizeCorrectionForFontFile, style, fontColor
-        );
+            if (!TS_FileUtils.isExistFile(path)) {
+                d.ce("getFontFrom", "UTF8 font bold not find!", path);
+                return TGS_UnionExcuse.of(getFontInternal(height, bold, italic, fontColor));
+            }
+            var baseFont = BaseFont.createFont(
+                    path.toAbsolutePath().normalize().toString(),
+                    BaseFont.IDENTITY_H, BaseFont.EMBEDDED
+            );
+            var newPdfFont = new Font(baseFont,
+                    height * fontSizeCorrectionForFontFile,
+                    style,
+                    fontColor
+            );
 //        fontBuffer.add(new FontBufferItem(path, height, bold, italic, fontColor, fontSizeCorrectionForFontFile, newPdfFont));
-        return newPdfFont;
+            return TGS_UnionExcuse.of(newPdfFont);
+        } catch (DocumentException | IOException ex) {
+            return TGS_UnionExcuse.ofExcuse(ex);
+        }
     }
 
     public static Font getFontInternal(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
@@ -476,9 +534,15 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 
     @Override
     public void close() {
-        TGS_UnSafe.run(() -> closeFix(), e -> d.ct("close.closeFix", e));
-        TGS_UnSafe.run(() -> document.close(), e -> d.ct("close.document", e));
-        TGS_UnSafe.run(() -> writer.close(), e -> d.ct("close.writer", e));
+        try {
+            closeFix();
+        } finally {
+            try {
+                document.close();
+            } finally {
+                writer.close();
+            }
+        }
     }
 
     private void closeFix() {

@@ -20,7 +20,7 @@ import com.tugalsan.api.string.client.TGS_StringUtils;
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.runnable.client.TGS_RunnableType1;
 import com.tugalsan.api.string.client.TGS_StringDouble;
-import com.tugalsan.api.unsafe.client.*;
+import com.tugalsan.api.union.client.TGS_UnionExcuse;
 import com.tugalsan.api.url.client.*;
 import java.util.*;
 
@@ -81,7 +81,7 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         setFontStyle();
     }
 
-    private Font getFontFrom(float k_half, int fontIdx, boolean bold, boolean italic) {
+    private TGS_UnionExcuse<Font> getFontFrom(float k_half, int fontIdx, boolean bold, boolean italic) {
         var k_file = 1f;
         return TS_FilePdfItextUtils.getFontFrom(
                 (int) (fileCommonConfig.fontHeight * k_half),
@@ -145,43 +145,38 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         if (isClosed()) {
             return true;
         }
-        return TGS_UnSafe.call(() -> {
-            d.ci("addImagePDF");
-            if (pdfTable == null && pdfCell == null) {
-                switch (left0_center1_right2) {
-                    case 0 ->
-                        pdf.addImageToPageLeft(pstImage, textWrap, true);
-                    case 1 ->
-                        pdf.addImageToPageCenter(pstImage, textWrap, true);
-                    default ->
-                        pdf.addImageToPageRight(pstImage, textWrap, true);
-                }
-            } else if (pdfTable != null && pdfCell == null) {
-                d.ce("addImagePDF", "ERROR: cell not exits error ");
-                d.ce("addImagePDF", TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
-                d.ce("addImagePDF", "compile_INSERT_IMAGE_COMMON cell not exits error ");
-                return false;
-            } else if (pdfTable == null && pdfCell != null) {
-                d.ce("addImagePDF", "ERROR: table not exits error ");
-                d.ce("addImagePDF", TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
-                d.ce("addImagePDF", "compile_INSERT_IMAGE_COMMON table not exits error ");
-                return false;
-            } else if (pdfTable != null && pdfCell != null) {
-                switch (left0_center1_right2) {
-                    case 0 -> //TODO FIX CELL IMG SİZE
-                        pdf.addImageToCellLeft(pdfCell, pstImage, textWrap, true);
-                    case 1 ->
-                        pdf.addImageToCellCenter(pdfCell, pstImage, textWrap, true);
-                    default ->
-                        pdf.addImageToCellRight(pdfCell, pstImage, textWrap, true);
-                }
+        d.ci("addImagePDF");
+        if (pdfTable == null && pdfCell == null) {
+            switch (left0_center1_right2) {
+                case 0 ->
+                    pdf.addImageToPageLeft(pstImage, textWrap, true);
+                case 1 ->
+                    pdf.addImageToPageCenter(pstImage, textWrap, true);
+                default ->
+                    pdf.addImageToPageRight(pstImage, textWrap, true);
             }
-            d.ci("addImagePDF", "addImagePDF is ok");
-            return true;
-        }, e -> {
-            d.ct("addImagePDF", e);
+        } else if (pdfTable != null && pdfCell == null) {
+            d.ce("addImagePDF", "ERROR: cell not exits error ");
+            d.ce("addImagePDF", TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
+            d.ce("addImagePDF", "compile_INSERT_IMAGE_COMMON cell not exits error ");
             return false;
-        });
+        } else if (pdfTable == null && pdfCell != null) {
+            d.ce("addImagePDF", "ERROR: table not exits error ");
+            d.ce("addImagePDF", TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
+            d.ce("addImagePDF", "compile_INSERT_IMAGE_COMMON table not exits error ");
+            return false;
+        } else if (pdfTable != null && pdfCell != null) {
+            switch (left0_center1_right2) {
+                case 0 -> //TODO FIX CELL IMG SİZE
+                    pdf.addImageToCellLeft(pdfCell, pstImage, textWrap, true);
+                case 1 ->
+                    pdf.addImageToCellCenter(pdfCell, pstImage, textWrap, true);
+                default ->
+                    pdf.addImageToCellRight(pdfCell, pstImage, textWrap, true);
+            }
+        }
+        d.ci("addImagePDF", "addImagePDF is ok");
+        return true;
     }
 
     @Override
@@ -215,25 +210,20 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         if (isClosed()) {
             return true;
         }
-        return TGS_UnSafe.call(() -> {
-            d.ci("endTableCell");
-            if (pdfTable == null) {
-                d.ce("endTableCell", "ERROR: table not exists error CODE_END_TABLECELL");
-                d.ce("endTableCell", TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
-                return false;
-            }
-            if (pdfCell == null) {
-                d.ce("endTableCell", "ERROR: cell not exists error CODE_END_TABLECELL");
-                d.ce("endTableCell", TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
-                return false;
-            }
-            pdf.addCellToTable(pdfTable, pdfCell, rotationInDegrees_0_90_180_270);
-            pdfCell = null;
-            return true;
-        }, e -> {
-            d.ct("endTableCell", e);
+        d.ci("endTableCell");
+        if (pdfTable == null) {
+            d.ce("endTableCell", "ERROR: table not exists error CODE_END_TABLECELL");
+            d.ce("endTableCell", TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
             return false;
-        });
+        }
+        if (pdfCell == null) {
+            d.ce("endTableCell", "ERROR: cell not exists error CODE_END_TABLECELL");
+            d.ce("endTableCell", TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
+            return false;
+        }
+        pdf.addCellToTable(pdfTable, pdfCell, rotationInDegrees_0_90_180_270);
+        pdfCell = null;
+        return true;
     }
 
     @Override
@@ -257,20 +247,15 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         if (isClosed()) {
             return true;
         }
-        return TGS_UnSafe.call(() -> {
-            d.ci("endTable");
-            if (pdfTable == null) {
-                d.ce("ERROR:CODE_END_TABLE table not exists error ");
-                d.ce(TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
-                return false;
-            }
-            pdf.addTableToPage(pdfTable);
-            pdfTable = null;
-            return true;
-        }, e -> {
-            d.ct("endTable", e);
+        d.ci("endTable");
+        if (pdfTable == null) {
+            d.ce("ERROR:CODE_END_TABLE table not exists error ");
+            d.ce(TGS_StringUtils.toString_ln(fileCommonConfig.macroLineTokens));
             return false;
-        });
+        }
+        pdf.addTableToPage(pdfTable);
+        pdfTable = null;
+        return true;
     }
 
     @Override
@@ -310,14 +295,9 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
             return false;
         }
         if (pdfTable == null && pdfCell == null) {
-            return TGS_UnSafe.call(() -> {
-                pdf.addParagraphToPage(pdfParag);
-                pdfParag = null;
-                return true;
-            }, e -> {
-                d.ce("endText", e);
-                return false;
-            });
+            pdf.addParagraphToPage(pdfParag);
+            pdfParag = null;
+            return true;
         }
         if (pdfTable != null && pdfCell == null) {
             d.ce("endText", "ERROR:cell not exits error ");
@@ -372,13 +352,13 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         IntStream.range(0, tags.size()).forEachOrdered(j -> {
             var tag = tags.get(j);
             var dbl = TGS_StringDouble.of(line);
-            if (dbl.isEmpty()) {
+            if (dbl.isExcuse()) {
                 pdf.addTextToParagraph(tag, pdfParag, pdfFont);
                 d.ci("addText", "line", "addTextToParagraph", "mayEmpty", line);
             } else {
                 d.ci("addText", "line", "addTextToParagraph", "mayDbl", line);
-                pdf.addTextToParagraph(String.valueOf(dbl.get().left), pdfParag, pdfFont);
-                pdf.addTextToParagraph(String.valueOf(dbl.get().dim()) + String.valueOf(dbl.get().right), pdfParag, pdfFont_half);
+                pdf.addTextToParagraph(String.valueOf(dbl.value().left), pdfParag, pdfFont);
+                pdf.addTextToParagraph(String.valueOf(dbl.value().dim()) + String.valueOf(dbl.value().right), pdfParag, pdfFont_half);
             }
             if (tags.size() - 1 != j) {
                 pdf.addTextToParagraph(" ", pdfParag, pdfFont);
@@ -433,18 +413,28 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
 //            }
 //            return family.regular();
 //        });
-        pdfFont = getFontFrom(
+        var u_pdfFont = getFontFrom(
                 1.0f,
                 fileCommonConfig.fontFamilyIdx,
                 fileCommonConfig.fontBold,
                 fileCommonConfig.fontItalic
         );
-        pdfFont_half = getFontFrom(
+        if (u_pdfFont.isExcuse()) {
+            d.ct("setFontStyle.u_pdfFont", u_pdfFont.excuse());
+            return false;
+        }
+        pdfFont = u_pdfFont.value();
+        var u_pdfFont_half = getFontFrom(
                 0.8f,
                 fileCommonConfig.fontFamilyIdx,
                 fileCommonConfig.fontBold,
                 fileCommonConfig.fontItalic
         );
+        if (u_pdfFont_half.isExcuse()) {
+            d.ct("setFontStyle.u_pdfFont_half", u_pdfFont_half.excuse());
+            return false;
+        }
+        pdfFont_half = u_pdfFont_half.value();
         return true;
     }
 
