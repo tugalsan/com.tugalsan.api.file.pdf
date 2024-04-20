@@ -477,7 +477,7 @@ public class TS_FilePdfBoxUtils {
             return dstPDF;
         }, e -> {
             d.ce("castFromIMGtoPDF_A4PORT", "failed", e.getMessage());
-            return TGS_UnSafe.thrwReturns(e);
+            return TGS_UnSafe.thrw(e);
         });
     }
 
@@ -496,7 +496,7 @@ public class TS_FilePdfBoxUtils {
             }
         }, e -> {
             d.ce("createPageBlank", "failed", e.getMessage());
-            return TGS_UnSafe.thrwReturns(e);
+            return TGS_UnSafe.thrw(e);
         });
     }
 
@@ -517,7 +517,7 @@ public class TS_FilePdfBoxUtils {
             }
         }, e -> {
             d.ce("createPageText", "failed", e.getMessage());
-            return TGS_UnSafe.thrwReturns(e);
+            return TGS_UnSafe.thrw(e);
         });
     }
 }
