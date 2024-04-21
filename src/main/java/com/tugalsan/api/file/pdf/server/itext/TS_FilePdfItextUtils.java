@@ -12,7 +12,6 @@ import java.util.stream.IntStream;
 import com.tugalsan.api.coronator.client.*;
 import com.tugalsan.api.file.server.*;
 import com.tugalsan.api.log.server.TS_Log;
-import com.tugalsan.api.thread.server.sync.TS_ThreadSyncLst;
 import com.tugalsan.api.unsafe.client.*;
 
 public class TS_FilePdfItextUtils implements AutoCloseable {
@@ -361,7 +360,6 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 //
 //    }
 //    final private static TS_ThreadSyncLst<FontBufferItem> fontBuffer = TS_ThreadSyncLst.of();
-
     public static Font getFontFrom(int height, boolean bold, boolean italic, BaseColor fontColor,
             Path path, float fontSizeCorrectionForFontFile) {
         var style = TGS_Coronator.ofInt().coronateAs(__ -> {
@@ -476,9 +474,19 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 
     @Override
     public void close() {
-        TGS_UnSafe.run(() -> closeFix(), e -> d.ct("close.closeFix", e));
-        TGS_UnSafe.run(() -> document.close(), e -> d.ct("close.document", e));
-        TGS_UnSafe.run(() -> writer.close(), e -> d.ct("close.writer", e));
+        TGS_UnSafe.run(() -> {
+            closeFix();
+        }, e -> d.ct("close.closeFix", e));
+        TGS_UnSafe.run(() -> {
+            if (document != null) {
+                document.close();
+            }
+        }, e -> d.ct("close.document", e));
+        TGS_UnSafe.run(() -> {
+            if (writer != null) {
+                writer.close();
+            }
+        }, e -> d.ct("close.writer", e));
     }
 
     private void closeFix() {
