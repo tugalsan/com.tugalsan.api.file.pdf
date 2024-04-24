@@ -1,6 +1,6 @@
 package com.tugalsan.api.file.pdf.server.pdfbox;
 
-import com.tugalsan.api.charset.client.TGS_CharSetCast;
+import com.tugalsan.api.charset.client.TGS_CharSet;
 import com.tugalsan.api.file.html.server.TS_FileHtmlUtils;
 import com.tugalsan.api.file.img.server.TS_FileImageUtils;
 import com.tugalsan.api.file.server.TS_DirectoryUtils;
@@ -482,7 +482,7 @@ public class TS_FilePdfBoxUtils {
     }
 
     public static boolean isSupportedIMG(Path imgFile) {
-        var fn = TGS_CharSetCast.toLocaleLowerCase(imgFile.getFileName().toString());
+        var fn = TGS_CharSet.cmn().languageDefault().toLowerCase(imgFile.getFileName().toString());
         return fn.endsWith(".jpg") || fn.endsWith(".jpeg") || fn.endsWith(".tif") || fn.endsWith(".tiff") || fn.endsWith(".gif") || fn.endsWith(".bmp") || fn.endsWith(".png");
     }
 
