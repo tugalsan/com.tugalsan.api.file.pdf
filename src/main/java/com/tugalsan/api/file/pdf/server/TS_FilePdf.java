@@ -375,13 +375,13 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         IntStream.range(0, tags.size()).forEachOrdered(j -> {
             var tag = tags.get(j);
             var dbl = TGS_StringDouble.of(line);
-            if (dbl.isEmpty()) {
+            if (dbl.isExcuse()) {
                 pdf.addTextToParagraph(tag, pdfParag, pdfFont);
                 d.ci("addText", "line", "addTextToParagraph", "mayEmpty", line);
             } else {
                 d.ci("addText", "line", "addTextToParagraph", "mayDbl", line);
-                pdf.addTextToParagraph(String.valueOf(dbl.get().left), pdfParag, pdfFont);
-                pdf.addTextToParagraph(String.valueOf(dbl.get().dim()) + String.valueOf(dbl.get().right), pdfParag, pdfFont_half);
+                pdf.addTextToParagraph(String.valueOf(dbl.value().left), pdfParag, pdfFont);
+                pdf.addTextToParagraph(String.valueOf(dbl.value().dim()) + String.valueOf(dbl.value().right), pdfParag, pdfFont_half);
             }
             if (tags.size() - 1 != j) {
                 pdf.addTextToParagraph(" ", pdfParag, pdfFont);

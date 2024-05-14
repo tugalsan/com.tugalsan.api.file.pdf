@@ -1,6 +1,5 @@
 package com.tugalsan.api.file.pdf.server.pdfbox;
 
-import com.tugalsan.api.charset.client.TGS_CharSet;
 import com.tugalsan.api.charset.client.TGS_CharSetCast;
 import com.tugalsan.api.file.html.server.TS_FileHtmlUtils;
 import com.tugalsan.api.file.img.server.TS_FileImageUtils;
@@ -14,10 +13,11 @@ import org.apache.pdfbox.pdmodel.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.shape.client.TGS_ShapeDimension;
 import com.tugalsan.api.stream.client.TGS_StreamUtils;
+import com.tugalsan.api.union.client.TGS_UnionExcuse;
+import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -40,33 +40,35 @@ public class TS_FilePdfBoxUtils {
     final private static TS_Log d = TS_Log.of(TS_FilePdfBoxUtils.class);
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static Optional<Path> toJpg(Path pdfSrcFile, Path jpgDstFile, int pageNumber) {
+    public static TGS_UnionExcuseVoid toJpg(Path pdfSrcFile, Path jpgDstFile, int pageNumber) {
         return TGS_UnSafe.call(() -> {
             TS_FileUtils.deleteFileIfExists(jpgDstFile);
             if (TS_FileUtils.isExistFile(jpgDstFile)) {
-                return Optional.empty();
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "toJpg", "TS_FileUtils.isExistFile(jpgDstFile)");
             }
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 var renderer = new PDFRenderer(doc);
                 var image = renderer.renderImage(pageNumber);
                 var result = ImageIO.write(image, "JPEG", jpgDstFile.toFile());
                 if (!result) {
-                    return Optional.empty();
+                    return TGS_UnionExcuseVoid.ofExcuse(d.className, "toJpg", "!result");
                 }
             }
-            return TS_FileUtils.isExistFile(jpgDstFile) ? Optional.of(jpgDstFile) : Optional.empty();
+            if (!TS_FileUtils.isExistFile(jpgDstFile)) {
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "toJpg", "!TS_FileUtils.isExistFile(jpgDstFile)");
+            }
+            return TGS_UnionExcuseVoid.ofVoid();
         }, e -> {
-            e.printStackTrace();
-            return Optional.empty();
+            return TGS_UnionExcuseVoid.ofExcuse(e);
         });
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static boolean combine(List<Path> pdfSrcFiles, Path pdfDstFile) {
+    public static TGS_UnionExcuseVoid combine(List<Path> pdfSrcFiles, Path pdfDstFile) {
         return TGS_UnSafe.call(() -> {
             TS_FileUtils.deleteFileIfExists(pdfDstFile);
             if (TS_FileUtils.isExistFile(pdfDstFile)) {
-                return false;
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "combine", "TS_FileUtils.isExistFile(pdfDstFile)");
             }
             var pdfMerger = new PDFMergerUtility();
             pdfMerger.setDestinationFileName(pdfDstFile.toAbsolutePath().toString());
@@ -74,31 +76,32 @@ public class TS_FilePdfBoxUtils {
                 pdfMerger.addSource(nextPdfSrcFile.toFile());
             }
             pdfMerger.mergeDocuments(null);
-            return TS_FileUtils.isExistFile(pdfDstFile);
+            if (!TS_FileUtils.isExistFile(pdfDstFile)) {
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "combine", "!TS_FileUtils.isExistFile(pdfDstFile)");
+            }
+            return TGS_UnionExcuseVoid.ofVoid();
         }, e -> {
-            e.printStackTrace();
-            return false;
+            return TGS_UnionExcuseVoid.ofExcuse(e);
         });
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static Optional<Integer> size(Path pdfFile) {
+    public static TGS_UnionExcuse<Integer> size(Path pdfFile) {
         return TGS_UnSafe.call(() -> {
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfFile.toAbsolutePath().toString()))) {
-                return Optional.of(doc.getNumberOfPages());
+                return TGS_UnionExcuse.of(doc.getNumberOfPages());
             }
         }, e -> {
-            e.printStackTrace();
-            return Optional.empty();
+            return TGS_UnionExcuse.ofExcuse(e);
         });
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static boolean extract(Path pdfSrcFile, int pageNr, Path pdfDstFile) {
+    public static TGS_UnionExcuseVoid extract(Path pdfSrcFile, int pageNr, Path pdfDstFile) {
         return TGS_UnSafe.call(() -> {
             TS_FileUtils.deleteFileIfExists(pdfDstFile);
             if (TS_FileUtils.isExistFile(pdfDstFile)) {
-                return false;
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "extract", "TS_FileUtils.isExistFile(pdfDstFile)");
             }
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
 //                var fromPage = pageNr;
@@ -115,19 +118,21 @@ public class TS_FilePdfBoxUtils {
                     out.save(pdfDstFile.toFile());
                 }
             }
-            return TS_FileUtils.isExistFile(pdfDstFile);
+            if (!TS_FileUtils.isExistFile(pdfDstFile)) {
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "extract", "!TS_FileUtils.isExistFile(pdfDstFile)");
+            }
+            return TGS_UnionExcuseVoid.ofVoid();
         }, e -> {
-            e.printStackTrace();
-            return false;
+            return TGS_UnionExcuseVoid.ofExcuse(e);
         });
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static boolean extract(Path pdfSrcFile, int[] pageNrs, Path pdfDstFile) {
+    public static TGS_UnionExcuseVoid extract(Path pdfSrcFile, int[] pageNrs, Path pdfDstFile) {
         return TGS_UnSafe.call(() -> {
             TS_FileUtils.deleteFileIfExists(pdfDstFile);
             if (TS_FileUtils.isExistFile(pdfDstFile)) {
-                return false;
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "extract", "TS_FileUtils.isExistFile(pdfDstFile)");
             }
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 try (var out = new PDDocument();) {
@@ -145,25 +150,31 @@ public class TS_FilePdfBoxUtils {
                     out.save(pdfDstFile.toFile());
                 }
             }
-            return TS_FileUtils.isExistFile(pdfDstFile);
+            if (!TS_FileUtils.isExistFile(pdfDstFile)) {
+                return TGS_UnionExcuseVoid.ofExcuse(d.className, "extract", "!TS_FileUtils.isExistFile(pdfDstFile)");
+            }
+            return TGS_UnionExcuseVoid.ofVoid();
+        }, e -> {
+            return TGS_UnionExcuseVoid.ofExcuse(e);
         });
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static void rotatePage(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
-        TGS_UnSafe.run(() -> {
+    public static TGS_UnionExcuseVoid rotatePage(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
+        return TGS_UnSafe.call(() -> {
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 TGS_StreamUtils.of(doc.getDocumentCatalog().getPages()).forEach(page -> {
                     page.setRotation(degree);
                 });
                 doc.save(pdfDstFile.toFile());
             }
-        });
+            return TGS_UnionExcuseVoid.ofVoid();
+        }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static void rotateWithCropBox(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
-        TGS_UnSafe.run(() -> {
+    public static TGS_UnionExcuseVoid rotateWithCropBox(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
+        return TGS_UnSafe.call(() -> {
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 var page = doc.getDocumentCatalog().getPages().get(0);
                 var matrix = Matrix.getRotateInstance(Math.toRadians(degree), rotateX, rotateY);
@@ -177,12 +188,13 @@ public class TS_FilePdfBoxUtils {
                 page.setMediaBox(newBox);
                 doc.save(pdfDstFile.toFile());
             }
-        });
+            return TGS_UnionExcuseVoid.ofVoid();
+        }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static void rotateAndFitContent(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
-        TGS_UnSafe.run(() -> {
+    public static TGS_UnionExcuseVoid rotateAndFitContent(Path pdfSrcFile, Path pdfDstFile, int degree, float rotateX, float rotateY) {
+        return TGS_UnSafe.call(() -> {
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 var page = doc.getDocumentCatalog().getPages().get(0);
                 try (var cs = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.PREPEND, false, false);) {
@@ -199,12 +211,13 @@ public class TS_FilePdfBoxUtils {
                 }
                 doc.save(pdfDstFile.toFile());
             }
-        });
+            return TGS_UnionExcuseVoid.ofVoid();
+        }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static void scale(Path pdfSrcFile, Path pdfDstFile, float xScale, float yScale) {
-        TGS_UnSafe.run(() -> {
+    public static TGS_UnionExcuseVoid scale(Path pdfSrcFile, Path pdfDstFile, float xScale, float yScale) {
+        return TGS_UnSafe.call(() -> {
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 var page = doc.getPage(0);
                 try (var cs = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.PREPEND, true);) {
@@ -214,12 +227,13 @@ public class TS_FilePdfBoxUtils {
                 }
                 doc.save(pdfDstFile.toFile());
             }
-        });
+            return TGS_UnionExcuseVoid.ofVoid();
+        }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static void scaleToA4(Path pdfSrcFile, Path pdfDstFile, float scaleFactor) {
-        TGS_UnSafe.run(() -> {
+    public static TGS_UnionExcuseVoid scaleToA4(Path pdfSrcFile, Path pdfDstFile, float scaleFactor) {
+        return TGS_UnSafe.call(() -> {
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 var page = doc.getPage(0);
                 try (var cs = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.PREPEND, true);) {
@@ -231,12 +245,13 @@ public class TS_FilePdfBoxUtils {
                 }
                 doc.save(pdfDstFile.toFile());
             }
-        });
+            return TGS_UnionExcuseVoid.ofVoid();
+        }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
-    public static void compress(Path pdfSrcFile, Path pdfDstFile, float compQual_fr0_to1, boolean lossless) {
-        TGS_UnSafe.run(() -> {
+    public static TGS_UnionExcuseVoid compress(Path pdfSrcFile, Path pdfDstFile, float compQual_fr0_to1, boolean lossless) {
+        return TGS_UnSafe.call(() -> {
             var compQual = Math.max(0, Math.min(compQual_fr0_to1, 1));
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 var pages = doc.getPages();
@@ -248,7 +263,7 @@ public class TS_FilePdfBoxUtils {
                     iwp = imgWriter.getDefaultWriteParam();
                     //iwp.setCompressionMode(ImageWriteParam.MODE_DISABLED);
                 } else {
-                    var jpgWriters                            = ImageIO.getImageWritersByFormatName("jpeg");
+                    var jpgWriters = ImageIO.getImageWritersByFormatName("jpeg");
                     imgWriter = jpgWriters.next();
                     iwp = imgWriter.getDefaultWriteParam();
                     iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
@@ -259,7 +274,8 @@ public class TS_FilePdfBoxUtils {
                 }
                 doc.save(pdfDstFile.toFile());
             }
-        });
+            return TGS_UnionExcuseVoid.ofVoid();
+        }, e -> TGS_UnionExcuseVoid.ofExcuse(e));
     }
 
     @Deprecated //TODO: I just wrote it. Not Tested!
@@ -269,7 +285,7 @@ public class TS_FilePdfBoxUtils {
             final ImageWriter imgWriter,
             final ImageWriteParam iwp, boolean lossless)
             throws FileNotFoundException, IOException {
-       var xNames = rList.getXObjectNames();
+        var xNames = rList.getXObjectNames();
         for (var xName : xNames) {
             final var xObj = rList.getXObject(xName);
             if (!(xObj instanceof PDImageXObject)) {
@@ -292,7 +308,7 @@ public class TS_FilePdfBoxUtils {
                     new IIOImage(img.getOpaqueImage(), null, null);
             };
             imgWriter.write(null, iioi, iwp);
-            var bais                    = new ByteArrayInputStream(baos.toByteArray());
+            var bais = new ByteArrayInputStream(baos.toByteArray());
             final PDImageXObject imgNew;
             if (lossless) {
                 imgNew = LosslessFactory.createFromImage(doc, img.getImage());
