@@ -7,6 +7,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.tugalsan.api.callable.client.TGS_CallableType1Void;
 import com.tugalsan.api.string.server.TS_StringUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.file.pdf.server.itext.TS_FilePdfItextUtils;
@@ -18,7 +19,6 @@ import java.nio.file.Path;
 import java.util.stream.IntStream;
 import com.tugalsan.api.string.client.TGS_StringUtils;
 import com.tugalsan.api.log.server.TS_Log;
-import com.tugalsan.api.runnable.client.TGS_RunnableType1;
 import com.tugalsan.api.string.client.TGS_StringDouble;
 import com.tugalsan.api.unsafe.client.*;
 import com.tugalsan.api.url.client.*;
@@ -44,7 +44,7 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         super(enabled, localFile, remoteFile);
     }
 
-    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_RunnableType1<TS_FilePdf> pdf) {
+    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_CallableType1Void<TS_FilePdf> pdf) {
         var instance = new TS_FilePdf(enabled, localFile, remoteFile);
         try {
             instance.use_init(fileCommonConfig);
