@@ -7,7 +7,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.tugalsan.api.callable.client.TGS_CallableType1Void;
+import com.tugalsan.api.callable.client.TGS_CallableType1_Run;
 import com.tugalsan.api.string.server.TS_StringUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.file.pdf.server.itext.TS_FilePdfItextUtils;
@@ -44,7 +44,7 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
         super(enabled, localFile, remoteFile);
     }
 
-    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_CallableType1Void<TS_FilePdf> pdf) {
+    public static void use(boolean enabled, TS_FileCommonConfig fileCommonConfig, Path localFile, TGS_Url remoteFile, TGS_CallableType1_Run<TS_FilePdf> pdf) {
         var instance = new TS_FilePdf(enabled, localFile, remoteFile);
         try {
             instance.use_init(fileCommonConfig);
@@ -410,7 +410,7 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
             return true;
         }
         d.ci("setFontStyle");
-//        pdfFont = TGS_Coronator.of(Font.class).coronateAs(__ -> {
+//        pdfFont = TGS_CallableType1_Coronator.of(Font.class).coronateAs(__ -> {
 //            var family = fontFamilyFonts_pdf.get(fileCommonConfig.fontFamilyIdx);
 //            if (fileCommonConfig.fontBold && fileCommonConfig.fontItalic) {
 //                return family.boldItalic();
@@ -423,7 +423,7 @@ public class TS_FilePdf extends TS_FileCommonAbstract {
 //            }
 //            return family.regular();
 //        });
-//        pdfFont_half = TGS_Coronator.of(Font.class).coronateAs(__ -> {
+//        pdfFont_half = TGS_CallableType1_Coronator.of(Font.class).coronateAs(__ -> {
 //            var family = fontFamilyFonts_pdfHalf.get(fileCommonConfig.fontFamilyIdx);
 //            if (fileCommonConfig.fontBold && fileCommonConfig.fontItalic) {
 //                return family.boldItalic();

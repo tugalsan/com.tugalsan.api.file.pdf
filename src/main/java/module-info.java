@@ -10,11 +10,11 @@ module com.tugalsan.api.file.pdf {
     requires com.tugalsan.api.tuple;
     requires com.tugalsan.api.thread;
     requires com.tugalsan.api.stream;
-    requires com.tugalsan.api.coronator;
+    
     requires com.tugalsan.api.font;
     requires com.tugalsan.api.string;
     requires com.tugalsan.api.url;
-    requires com.tugalsan.api.validator;
+    
     requires com.tugalsan.api.callable;
     requires com.tugalsan.api.list;
     requires com.tugalsan.api.charset;

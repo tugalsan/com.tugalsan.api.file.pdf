@@ -1,6 +1,6 @@
 package com.tugalsan.api.file.pdf.server.pdfbox;
 
-import com.tugalsan.api.coronator.client.TGS_Coronator;
+import com.tugalsan.api.callable.client.TGS_CallableType1_Coronator;
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.nio.file.Path;
@@ -41,7 +41,7 @@ public class TS_FilePdfBox {
 //            var marginRight = marginRight0 == null ? 10 : marginRight0;
 //            var marginTop = marginTop0 == null ? 10 : marginTop0;
 //            var marginBottom = marginBottom0 == null ? 10 : marginBottom0;
-            var page = TGS_Coronator.of(PDPage.class)
+            var page = TGS_CallableType1_Coronator.of(PDPage.class)
                     .anoint(val -> new PDPage(PDRectangle.A4))
                     .anointIf(val -> pageSizeAX == 0, val -> new PDPage(PDRectangle.A0))
                     .anointIf(val -> pageSizeAX == 1, val -> new PDPage(PDRectangle.A1))
