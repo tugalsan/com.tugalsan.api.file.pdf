@@ -4,7 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.tugalsan.api.callable.client.TGS_CallableType1_Coronator;
+import com.tugalsan.api.function.client.TGS_FuncEffectivelyFinal;
 import com.tugalsan.api.charset.client.*;
 import java.awt.Color;
 import java.nio.file.Files;
@@ -149,11 +149,11 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
             var marginRight = marginRight0 == null ? 10 : marginRight0;
             var marginTop = marginTop0 == null ? 10 : marginTop0;
             var marginBottom = marginBottom0 == null ? 10 : marginBottom0;
-            var pageSizeAX = TGS_CallableType1_Coronator.of(pageSizeAX0)
+            var pageSizeAX = TGS_FuncEffectivelyFinal.of(pageSizeAX0)
                     .anointIf(val -> val < 0, val -> 0)
                     .anointIf(val -> val > 6, val -> 6)
                     .coronate();
-            var pageSize = TGS_CallableType1_Coronator.of(TS_FilePdfItextUtils.getPAGE_SIZE_A4_PORT())
+            var pageSize = TGS_FuncEffectivelyFinal.of(TS_FilePdfItextUtils.getPAGE_SIZE_A4_PORT())
                     .anointIf(val -> pageSizeAX == 0, val -> landscape ? TS_FilePdfItextUtils.getPAGE_SIZE_A0_LAND() : TS_FilePdfItextUtils.getPAGE_SIZE_A0_PORT())
                     .anointIf(val -> pageSizeAX == 1, val -> landscape ? TS_FilePdfItextUtils.getPAGE_SIZE_A1_LAND() : TS_FilePdfItextUtils.getPAGE_SIZE_A1_PORT())
                     .anointIf(val -> pageSizeAX == 2, val -> landscape ? TS_FilePdfItextUtils.getPAGE_SIZE_A2_LAND() : TS_FilePdfItextUtils.getPAGE_SIZE_A2_PORT())
@@ -362,7 +362,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
 //    final private static TS_ThreadSyncLst<FontBufferItem> fontBuffer = TS_ThreadSyncLst.of();
     public static Font getFontFrom(int height, boolean bold, boolean italic, BaseColor fontColor,
             Path path, float fontSizeCorrectionForFontFile) {
-        var style = TGS_CallableType1_Coronator.ofInt().coronateAs(__ -> {
+        var style = TGS_FuncEffectivelyFinal.ofInt().coronateAs(__ -> {
             if (bold && italic) {
                 return Font.BOLDITALIC;
             }
@@ -404,7 +404,7 @@ public class TS_FilePdfItextUtils implements AutoCloseable {
     }
 
     public static Font getFontInternal(int fontSize, boolean bold, boolean italic, BaseColor fontColor) {
-        var fontStyle = TGS_CallableType1_Coronator.ofInt().coronateAs(__ -> {
+        var fontStyle = TGS_FuncEffectivelyFinal.ofInt().coronateAs(__ -> {
             if (bold && italic) {
                 return Font.BOLDITALIC;
             }

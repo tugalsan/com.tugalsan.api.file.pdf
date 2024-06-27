@@ -5,19 +5,19 @@ import com.itextpdf.text.Rectangle;
 
 public class TS_FilePdfItextDocumentAutoClosable extends Document implements AutoCloseable {
 
-//    public static Document use(TGS_CallableType1_Run<Document> doc) {
+//    public static Document use(TGS_Func_In1<Document> doc) {
 //        return use(null, null, null, null, null, doc);
 //    }
 //
-//    public static Document usePageAs(Rectangle pageSize, TGS_CallableType1_Run<Document> doc) {
+//    public static Document usePageAs(Rectangle pageSize, TGS_Func_In1<Document> doc) {
 //        return use(pageSize, null, null, null, null, doc);
 //    }
 //
-//    public static Document usePageAndMarginAs(Rectangle pageSize, float marginLeft, float marginRight, float marginTop, float marginBottom, TGS_CallableType1_Run<Document> doc) {
+//    public static Document usePageAndMarginAs(Rectangle pageSize, float marginLeft, float marginRight, float marginTop, float marginBottom, TGS_Func_In1<Document> doc) {
 //        return use(pageSize, null, null, null, null, doc);
 //    }
 //
-//    private static Document use(Rectangle pageSize, Float marginLeft, Float marginRight, Float marginTop, Float marginBottom, TGS_CallableType1_Run<Document> doc) {
+//    private static Document use(Rectangle pageSize, Float marginLeft, Float marginRight, Float marginTop, Float marginBottom, TGS_Func_In1<Document> doc) {
 //        Document d = null;
 //        try {
 //            if (pageSize == null) {

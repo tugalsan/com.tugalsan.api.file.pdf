@@ -15,7 +15,7 @@ module com.tugalsan.api.file.pdf {
     requires com.tugalsan.api.string;
     requires com.tugalsan.api.url;
     
-    requires com.tugalsan.api.callable;
+    requires com.tugalsan.api.function;
     requires com.tugalsan.api.list;
     requires com.tugalsan.api.charset;
     requires com.tugalsan.api.log;
