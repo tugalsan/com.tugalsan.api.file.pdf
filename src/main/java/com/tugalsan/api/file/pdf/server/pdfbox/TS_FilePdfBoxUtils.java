@@ -16,6 +16,7 @@ import com.tugalsan.api.stream.client.TGS_StreamUtils;
 import com.tugalsan.api.union.client.TGS_UnionExcuse;
 import com.tugalsan.api.union.client.TGS_UnionExcuseVoid;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import javax.imageio.IIOImage;
@@ -34,6 +35,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.util.Matrix;
+import org.fit.pdfdom.PDFDomTree;
 
 public class TS_FilePdfBoxUtils {
 
@@ -48,7 +50,8 @@ public class TS_FilePdfBoxUtils {
             }
             try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfSrcFile.toAbsolutePath().toString()))) {
                 var renderer = new PDFRenderer(doc);
-                var image = renderer.renderImage(pageNumber);
+                //var image = renderer.renderImage(pageNumber);
+                var image = renderer.renderImageWithDPI(pageNumber, 300);
                 var result = ImageIO.write(image, "JPEG", jpgDstFile.toFile());
                 if (!result) {
                     return TGS_UnionExcuseVoid.ofExcuse(d.className, "toJpg", "!result");
@@ -322,10 +325,9 @@ public class TS_FilePdfBoxUtils {
     @Deprecated //NOT WORKING ERROR: org.apache.pdfbox version incompatible
     public static Path castFromPDFtoHTM(Path srcPDF, Path dstHTM, CharSequence optionalTitle, CharSequence optionalHeaderContent, CharSequence optional_iframe_video, boolean addLoader) {
         d.ci("castFromPDFtoHTM", srcPDF, dstHTM);
-//        TGS_UnSafe.run(() -> {
-//        castFromPDFtoHTM_do(srcPDF, dstHTM);
-//        }, e -> {
-        if (true) {
+        TGS_UnSafe.run(() -> {
+            castFromPDFtoHTM_do(srcPDF, dstHTM);
+        }, e -> {
             TS_FileTxtUtils.toFile("""
             <html><head><title>ERROR</title></head><body>
             PDF'den HTM ön izlene dosyası oluşturuken bir hata oluştu. Lütfen orjinal pdf dosyayı indiriniz.<br>
@@ -334,9 +336,8 @@ public class TS_FilePdfBoxUtils {
             %s
             </body></html>
             """.formatted("ERROR: org.apache.pdfbox version incompatible; disabled until further notice!"), dstHTM, false);
-        }
-//        e.printStackTrace();
-//        });
+            e.printStackTrace();
+        });
 
         var strHtm = TS_FileTxtUtils.toString(dstHTM);
         if (addLoader) {
@@ -355,8 +356,7 @@ public class TS_FilePdfBoxUtils {
             strHtm = TS_FileHtmlUtils.updateTitleContent(strHtm, optionalTitle);
         }
 
-        return TS_FileTxtUtils.toFile(strHtm, dstHTM,
-                false);
+        return TS_FileTxtUtils.toFile(strHtm, dstHTM, false);
     }
 
     /*
@@ -428,17 +428,18 @@ public class TS_FilePdfBoxUtils {
 		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
 		... 34 more
      */
-//    @Deprecated //NOT WORKING ERROR: org.apache.pdfbox version incompatible
-//    private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
-//        return TGS_UnSafe.call(() -> {
-//            d.cr("castFromPDFtoHTM", "init", srcPDF, dstHTM);
-//            try (var pdf = Loader.loadPDF(new RandomAccessReadBufferedFile(srcPDF.toFile())); var output = new PrintWriter(dstHTM.toFile(), TGS_CharSetUTF8.UTF8);) {
-//                new PDFDomTree().writeText(pdf, output);
-//                d.cr("castFromPDFtoHTM", "success");
-//            }
-//            return dstHTM;
-//        });
-//    }
+    @Deprecated //NOT WORKING ERROR: org.apache.pdfbox version incompatible
+    private static Path castFromPDFtoHTM_do(Path srcPDF, Path dstHTM) {
+        return TGS_UnSafe.call(() -> {
+            d.cr("castFromPDFtoHTM_do", "init", srcPDF, dstHTM);
+            try (var pdf = Loader.loadPDF(new RandomAccessReadBufferedFile(srcPDF.toFile())); var output = new PrintWriter(dstHTM.toFile(), StandardCharsets.UTF_8);) {
+                new PDFDomTree().writeText(pdf, output);
+                d.cr("castFromPDFtoHTM_do", "success");
+            }
+            return dstHTM;
+        });
+    }
+
     public static PDImageXObject getImage(Path imgFile, PDDocument document) {
         return TGS_UnSafe.call(() -> PDImageXObject.createFromFile(imgFile.toAbsolutePath().toString(), document));
     }
