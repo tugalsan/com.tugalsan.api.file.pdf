@@ -4,7 +4,6 @@ module com.tugalsan.api.file.pdf {
     requires jai.imageio.core;
     requires org.apache.pdfbox; //TODO https://stackoverflow.com/questions/18189314/convert-a-pdf-file-to-image
     requires org.apache.pdfbox.io;
-    requires net.sf.cssbox.pdf2dom;
     requires com.tugalsan.api.union;
     requires com.tugalsan.api.unsafe;
     requires com.tugalsan.api.tuple;
