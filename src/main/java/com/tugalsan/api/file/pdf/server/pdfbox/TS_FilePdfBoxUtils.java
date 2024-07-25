@@ -416,4 +416,11 @@ public class TS_FilePdfBoxUtils {
             return TGS_UnSafe.thrw(e);
         });
     }
+
+    @Deprecated //NOT WORKIG (?)
+    public static boolean isPDFSigned(Path filePath) throws IOException {
+        try (var doc = Loader.loadPDF(new RandomAccessReadBufferedFile(filePath.toAbsolutePath().toString()))) {
+            return !doc.getSignatureDictionaries().isEmpty();
+        }
+    }
 }

@@ -8,7 +8,6 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.tugalsan.api.function.client.TGS_Func_In1;
-import com.tugalsan.api.string.client.TGS_StringUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.file.pdf.server.itext.TS_FilePdfItextUtils;
 import com.tugalsan.api.file.common.server.TS_FileCommonFontTags;
